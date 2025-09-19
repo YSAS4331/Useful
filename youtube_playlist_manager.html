@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YouTube ローカルプレイリスト</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#7dd3fc; --chip-bg:rgba(255,255,255,0.03);
+      --chip-border:rgba(255,255,255,0.06); --text: #e6eef6; --muted-2:#bfc9d2;
+    }
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo, sans-serif;margin:0;background:linear-gradient(180deg,#071022 0%, #071727 100%);color:var(--text);min-height:100vh;padding:28px}
+    h1{margin:0 0 10px;font-size:20px}
+    .app{max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:18px}
+    .card{background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 20px rgba(2,6,23,0.6)}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    .row{display:flex;gap:8px}
+    input[type=text], select{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:inherit;outline:none;width:100%}
+    button{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;color:#042027;font-weight:600;cursor:pointer}
+    .controls{display:flex;gap:8px;align-items:center}
+    .list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:6px}
+
+    /* item */
+    .item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+    .title{cursor:pointer;font-weight:600}
+    .meta{font-size:12px;color:var(--muted)}
+    .flexcol{display:flex;flex-direction:column}
+    .player{width:100%;height:240px;border-radius:10px;overflow:hidden;background:#000}
+    iframe{width:100%;height:100%;border:0}
+
+    /* groups */
+    .groups{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .chip{padding:6px 10px;border-radius:20px;background:var(--chip-bg);font-size:13px;cursor:pointer;border:1px solid var(--chip-border);color:var(--text);}
+    .chip:hover{transform:translateY(-2px);transition:all .12s}
+    .chip.active{background:linear-gradient(90deg,#0b5a6a,#064b56);color:#dff8ff;border-color:rgba(125,211,252,0.18);}
+
+    .right-col{display:flex;flex-direction:column;gap:12px}
+    .muted{color:var(--muted)}
+    .small{font-size:13px}
+    footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* refined dummy checkbox */
+    .cb { width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,0.25);display:inline-flex;align-items:center;justify-content:center;background:transparent;cursor:pointer;flex:0 0 22px;transition:all .15s ease;position:relative; }
+    .cb:hover { border-color:var(--accent); }
+    .cb.checked { background:linear-gradient(135deg,#16a34a,#059669);border-color:#059669; }
+    .cb.checked::after {
+      content: "";
+      position:absolute;
+      width:10px; height:6px;
+      border-left:2px solid white;
+      border-bottom:2px solid white;
+      transform:rotate(-45deg);
+    }
+
+    .actions button{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px}
+
+    @media(max-width:980px){.app{grid-template-columns:1fr;}.player{height:210px}}
+  </style>
+</head>
+<body>
+  <h1>YouTube ローカルプレイリスト（保存: localStorage）</h1>
+  <div class="app">
+    <div class="card">
+      <div class="flexcol">
+        <label>動画ID または watch?v=... のURL</label>
+        <div class="row">
+          <input id="inputId" type="text" placeholder="例: dQw4w9WgXcQ または https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+          <input id="inputTitle" type="text" placeholder="動画タイトル（任意）" style="width:240px">
+          <button id="addBtn">追加</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+          <label style="margin:0">グループ:</label>
+          <select id="groupSelect"></select>
+          <input id="newGroup" type="text" placeholder="新しいグループ名" style="width:160px">
+          <button id="addGroupBtn">グループ追加</button>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+          <div class="muted small">全アイテム: <span id="count">0</span></div>
+          <div class="controls">
+            <button id="export">エクスポート</button>
+            <button id="import">インポート</button>
+            <button id="clearAll">すべて削除</button>
+          </div>
+        </div>
+
+        <div class="groups" id="groupChips" style="margin-top:12px"></div>
+
+        <div class="list" id="list"></div>
+      </div>
+    </div>
+
+    <div class="card right-col">
+      <div>
+        <div class="muted small">選択中の動画</div>
+        <div class="player" id="player">
+          <div style="display:grid;place-items:center;height:100%" class="muted">動画を選択してください</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="muted">現在のグループフィルタ</label>
+        <div id="currentFilter" class="muted">すべて</div>
+      </div>
+
+      <div>
+        <label class="muted">使い方のヒント</label>
+        <ul class="muted small">
+          <li>動画ID入力にはフルURLも可。自動でIDを抽出します。</li>
+          <li>タイトルをクリックすると右側に埋め込み再生されます。</li>
+          <li>チェックボックスは "作成済み/完了" フラグです（デザインを改善しました）。</li>
+        </ul>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="search" type="text" placeholder="タイトルで検索" style="flex:1">
+        <button id="resetFilter">リセット</button>
+      </div>
+
+      <footer>データはブラウザの localStorage に保存されます。</footer>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'yt_local_playlist_v1';
+  const $ = id => document.getElementById(id);
+  function uid(){ return 'id-' + Math.random().toString(36).slice(2,9) }
+  function extractId(input){
+    if(!input) return '';
+    input = input.trim();
+    try{ const url = new URL(input); if(url.hostname.includes('youtu')){ if(url.searchParams.get('v')) return url.searchParams.get('v'); if(url.hostname === 'youtu.be') return url.pathname.slice(1); } }
+    catch(e){}
+    const m = input.match(/[A-Za-z0-9_-]{11,}/);
+    return m ? m[0] : input;
+  }
+
+  let state = {items: [], groups: ['すべて'] , filter: 'すべて'};
+  function load(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ try{ const parsed = JSON.parse(raw); state = parsed; } catch(e){ console.error('storage parse error', e); }}
+    if(!state.groups) state.groups = ['すべて']; render();
+  }
+  function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); renderCounts(); }
+
+  function render(){ renderGroupSelect(); renderGroupChips(); renderList(); renderCounts(); }
+  function renderGroupSelect(){ const sel = $('groupSelect'); sel.innerHTML=''; state.groups.filter(g => g !== 'すべて').forEach(g => { const o = document.createElement('option'); o.value = g; o.textContent = g; sel.appendChild(o); }); }
+
+  function renderGroupChips(){ const container = $('groupChips'); container.innerHTML=''; const groups = ['すべて', ...state.groups.filter(g=>g!=='すべて')]; groups.forEach(g => { const b = document.createElement('button'); b.className='chip'+(state.filter===g? ' active':''); b.textContent=g; b.addEventListener('click', ()=>{ state.filter = g; render(); $('currentFilter').textContent = g; }); container.appendChild(b); }); }
+
+  function renderList(){ const list = $('list'); list.innerHTML=''; const q = $('search').value.trim().toLowerCase(); const items = state.items.filter(it => { if(state.filter !== 'すべて' && it.group !== state.filter) return false; if(q && !it.title.toLowerCase().includes(q) && !it.id.toLowerCase().includes(q)) return false; return true; });
+    items.forEach(it => {
+      const el = document.createElement('div'); el.className='item';
+
+      // dummy checkbox
+      const cb = document.createElement('div'); cb.className = 'cb' + (it.done? ' checked' : ''); cb.setAttribute('role','button'); cb.setAttribute('aria-pressed', it.done ? 'true' : 'false');
+      cb.addEventListener('click', ()=>{ it.done = !it.done; save(); render(); });
+
+      const col = document.createElement('div'); col.className='flexcol'; col.style.flex='1';
+      const t = document.createElement('div'); t.className='title'; t.textContent = it.title || '(タイトルなし)';
+      t.addEventListener('click', ()=> loadPlayer(it.id));
+      const meta = document.createElement('div'); meta.className='meta'; meta.innerHTML = `<span class='muted'>ID:</span> ${it.id} &nbsp; <span class='muted'>グループ:</span> `;
+
+      const groupSel = document.createElement('select');
+      const groups = ['すべて', ...state.groups.filter(g=>g!=='すべて')];
+      groups.forEach(g => { const o=document.createElement('option'); o.value=g; o.textContent=g; if(g===it.group) o.selected=true; groupSel.appendChild(o); });
+      groupSel.addEventListener('change', ()=>{ it.group = groupSel.value; save(); });
+      meta.appendChild(groupSel);
+
+      col.appendChild(t); col.appendChild(meta);
+
+      const actions = document.createElement('div'); actions.className='actions'; actions.style.display='flex'; actions.style.gap='6px';
+      const editBtn = document.createElement('button'); editBtn.textContent='編集'; editBtn.addEventListener('click', ()=>{ $('inputId').value = it.id; $('inputTitle').value = it.title; $('groupSelect').value = it.group==='すべて'? '': it.group; removeItem(it._uid); });
+      const delBtn = document.createElement('button'); delBtn.textContent='削除'; delBtn.addEventListener('click', ()=>{ if(confirm('この動画を削除しますか？')){ removeItem(it._uid); } });
+
+      actions.appendChild(editBtn); actions.appendChild(delBtn);
+
+      el.appendChild(cb); el.appendChild(col); el.appendChild(actions);
+      list.appendChild(el);
+    });
+  }
+
+  function renderCounts(){ $('count').textContent = state.items.length }
+
+  function addGroup(name){ name = (name||'').trim(); if(!name) return; if(state.groups.includes(name)) return; state.groups.push(name); save(); }
+  function addItem(id, title, group){ id = extractId(id); if(!id) return alert('IDが空です'); title = title || ''; group = group || 'すべて'; const it = { _uid: uid(), id, title, group, done:false, createdAt: Date.now() }; state.items.unshift(it); save(); }
+  function removeItem(uid){ state.items = state.items.filter(i => i._uid !== uid); save(); render(); }
+  function loadPlayer(id){ const player = $('player'); player.innerHTML = ''; const iframe = document.createElement('iframe'); iframe.src = `https://www.youtube.com/embed/${id}?rel=0&autoplay=1`; iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;'; iframe.title='YouTube player'; player.appendChild(iframe); }
+
+  function exportJson(){ const data = JSON.stringify(state, null, 2); const blob = new Blob([data], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'yt-playlist.json'; a.click(); URL.revokeObjectURL(url); }
+  function importJson(){ const inp = document.createElement('input'); inp.type='file'; inp.accept='.json,application/json'; inp.onchange = e => { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ev => { try{ const obj = JSON.parse(ev.target.result); if(obj && obj.items) { state = obj; save(); render(); alert('インポートしました'); } else alert('不正なフォーマットです'); } catch(err){ alert('読み込みに失敗しました') } }; r.readAsText(f); }; inp.click(); }
+
+  // bindings
+  $('addBtn').addEventListener('click', ()=>{ const id = $('inputId').value; const title = $('inputTitle').value; const group = $('groupSelect').value || 'すべて'; addItem(id, title, group); $('inputId').value=''; $('inputTitle').value=''; });
+  $('addGroupBtn').addEventListener('click', ()=>{ addGroup($('newGroup').value); $('newGroup').value=''; render(); });
+  $('export').addEventListener('click', exportJson);
+  $('import').addEventListener('click', importJson);
+  $('clearAll').addEventListener('click', ()=>{ if(confirm('本当にすべてのデータを削除しますか？')){ state = {items:[], groups:['すべて'], filter:'すべて'}; save(); render(); } });
+  $('search').addEventListener('input', render);
+  $('resetFilter').addEventListener('click', ()=>{ state.filter='すべて'; render(); $('currentFilter').textContent='すべて'; });
+  $('inputId').addEventListener('keydown', e => { if(e.key==='Enter') $('addBtn').click(); });
+  $('inputTitle').addEventListener('keydown', e => { if(e.key==='Enter') $('addBtn').click(); });
+
+  // initial load
+  load();
+})();
+</script>
+</body>
+</html>
