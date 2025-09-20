@@ -65,12 +65,26 @@
         <div class="flexcol">
           <label>Positions: X, Y, Z</label>
           <div class="row">
-            <input type="text" placeholder="X">
-            <input type="text" placeholder="Y">
-            <input type="text" placeholder="Z">
+            <input class="InputNumber" type="text" placeholder="X">
+            <input class="InputNumber" type="text" placeholder="Y">
+            <input class="InputNumber" type="text" placeholder="Z">
           </div>
         </div>
       </div>
     </div>
+    <script>
+      (function() {
+        const STORAGE_KEY = 'mc_local_positions_v1';
+        const $ = id => document.getElementById(id);
+        const $$ = sel => document.querySelector(sel);
+        const $$$ = sel => [...document.querySelectorAll(sel)];
+        const classOp = (el, type, className) => {
+          if (typeof el.classList[type] === 'function') {
+            el.classList[type](className);
+          }
+        }
+        function uid(){ return 'id-' + Math.random().toString(36).slice(2,9) }
+      })();
+    </script>
   </body>
 </html>
