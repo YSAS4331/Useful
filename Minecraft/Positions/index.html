@@ -84,6 +84,21 @@
           }
         }
         function uid(){ return 'id-' + Math.random().toString(36).slice(2,9) }
+
+        $$$('.InputNumber').forEach(el => {
+          el.addEventListener('focus', () => {
+            el.select();
+          });
+          el.addEventListener('input', () => {
+            let num = el.value.normalize('NFKC').replace(/[^0-9]/g, '');
+            if (num === '') {
+              el.value = '';
+              return;
+            }
+            num = Number(num);
+            el.value = num;
+          });
+        });
       })();
     </script>
   </body>
