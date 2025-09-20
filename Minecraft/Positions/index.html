@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang='ja'>
-  <head>
-    <title>Minecraft Positions</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      :root{
+<head>
+  <title>Minecraft Positions</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
       --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#7dd3fc; --chip-bg:rgba(255,255,255,0.03);
       --chip-border:rgba(255,255,255,0.06); --text: #e6eef6; --muted-2:#bfc9d2;
     }
     *{box-sizing:border-box}
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo, sans-serif;margin:0;background:linear-gradient(180deg,#071022 0%, #071727 100%);color:var(--text);min-height:100vh;padding:28px}
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo, sans-serif;
+      margin:0;
+      background:linear-gradient(180deg,#071022 0%, #071727 100%);
+      color:var(--text);
+      min-height:100vh;
+      padding:28px;
+    }
     h1{margin:0 0 10px;font-size:20px}
     .app{max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:18px}
     .card{background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 20px rgba(2,6,23,0.6)}
@@ -56,55 +63,47 @@
     .actions button{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px}
 
     @media(max-width:980px){.app{grid-template-columns:1fr;}.player{height:210px}}
-    </style>
-  </head>
-  <body>
-    <h1>Minecraft 座標メモ</h1>
-    <div class="app">
-      <div class="card">
-        <div class="flexcol">
-          <label>Positions: X, Y, Z</label>
-          <div class="row">
-            <input class="InputNumber" type="text" placeholder="X">
-            <input class="InputNumber" type="text" placeholder="Y">
-            <input class="InputNumber" type="text" placeholder="Z">
-          </div>
+  </style>
+</head>
+<body>
+  <h1>Minecraft 座標メモ</h1>
+  <div class="app">
+    <div class="card">
+      <div class="flexcol">
+        <label>Positions: X, Y, Z</label>
+        <div class="row">
+          <input class="InputNumber" type="text" placeholder="X">
+          <input class="InputNumber" type="text" placeholder="Y">
+          <input class="InputNumber" type="text" placeholder="Z">
         </div>
       </div>
     </div>
-    <script>
-      (function() {
-        const STORAGE_KEY = 'mc_local_positions_v1';
-        const $ = id => document.getElementById(id);
-        const $$ = sel => document.querySelector(sel);
-        const $$$ = sel => [...document.querySelectorAll(sel)];
-        const classOp = (el, type, className) => {
-          if (typeof el.classList[type] === 'function') {
-            el.classList[type](className);
-          }
-        }
-        function uid(){ return 'id-' + Math.random().toString(36).slice(2,9) }
+  </div>
 
-        $$$('.InputNumber').forEach(el => {
-          el.addEventListener('focus', () => {
-            el.select();
-          });
-          el.addEventListener('input', () => {
-            let val = el.value.normalize('NFKC').replace(/[^0-9-]/g, '');
-            
-            if (val.indexOf('-') > 0) {
-              val = '-' + val.replace(/-/g, '');
-            }
-            
-            if (val === '-' || val === '') {
+  <script>
+    (function() {
+      const STORAGE_KEY = 'mc_local_positions_v1';
+      const $$$ = sel => [...document.querySelectorAll(sel)];
+      const uid = () => 'id-' + Math.random().toString(36).slice(2,9);
+
+      // 数値入力（負の数対応）
+      $$$('.InputNumber').forEach(el => {
+        el.addEventListener('focus', () => el.select());
+
+        el.addEventListener('input', () => {
+          let val = el.value.normalize('NFKC').replace(/[^0-9-]/g, '');
+          // - が途中にある場合は先頭に移動
+          if (val.indexOf('-') > 0) val = '-' + val.replace(/-/g, '');
+          // '-' 単体は入力途中として保持
+          if (val === '-' || val === '') {
             el.value = val;
             return;
-            }
-            
-            el.value = Number(val);
-          });
+          }
+          const num = parseInt(val, 10);
+          el.value = !isNaN(num) ? num : '';
         });
-      })();
-    </script>
-  </body>
+      });
+    })();
+  </script>
+</body>
 </html>
