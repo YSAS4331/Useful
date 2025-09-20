@@ -90,8 +90,8 @@
             el.select();
           });
           el.addEventListener('input', () => {
-            let num = el.value.normalize('NFKC').replace(/[^0-9]/g, '');
-            if (num === '') {
+            let num = el.value.normalize('NFKC').replace(/(?!^-)[^0-9]/g, '');
+            if (num === '' || num === '-') {
               el.value = '';
               return;
             }
