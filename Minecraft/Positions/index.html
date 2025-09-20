@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang='ja'>
 <head>
-  <title>Minecraft Positions</title>
+  <title>Minecraft 座標メモ</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
@@ -11,98 +11,115 @@
     }
     *{box-sizing:border-box}
     body{
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo, sans-serif;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
       margin:0;
       background:linear-gradient(180deg,#071022 0%, #071727 100%);
       color:var(--text);
       min-height:100vh;
       padding:28px;
     }
-    h1{margin:0 0 10px;font-size:20px}
+    h1{margin:0 0 16px;font-size:22px}
     .app{max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:18px}
     .card{background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 20px rgba(2,6,23,0.6)}
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
     .row{display:flex;gap:8px}
-    input[type=text], select{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:inherit;outline:none;width:100%}
+    input[type=text]{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:inherit;outline:none;width:100%}
     button{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;color:#042027;font-weight:600;cursor:pointer}
-    .controls{display:flex;gap:8px;align-items:center}
     .list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:6px}
 
-    /* item */
-    .item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
-    .title{cursor:pointer;font-weight:600}
+    .item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.015),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+    .coords{font-weight:600}
     .meta{font-size:12px;color:var(--muted)}
     .flexcol{display:flex;flex-direction:column}
-    .player{width:100%;height:240px;border-radius:10px;overflow:hidden;background:#000}
-    iframe{width:100%;height:100%;border:0}
+    .actions{margin-left:auto;display:flex;gap:6px}
+    .actions button{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px;font-size:12px}
 
-    /* groups */
-    .groups{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .chip{padding:6px 10px;border-radius:20px;background:var(--chip-bg);font-size:13px;cursor:pointer;border:1px solid var(--chip-border);color:var(--text);}
-    .chip:hover{transform:translateY(-2px);transition:all .12s}
-    .chip.active{background:linear-gradient(90deg,#0b5a6a,#064b56);color:#dff8ff;border-color:rgba(125,211,252,0.18);}
-
-    .right-col{display:flex;flex-direction:column;gap:12px}
-    .muted{color:var(--muted)}
-    .small{font-size:13px}
-    footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
-
-    /* refined dummy checkbox */
-    .cb { width:22px;height:22px;border-radius:6px;border:2px solid rgba(255,255,255,0.25);display:inline-flex;align-items:center;justify-content:center;background:transparent;cursor:pointer;flex:0 0 22px;transition:all .15s ease;position:relative; }
-    .cb:hover { border-color:var(--accent); }
-    .cb.checked { background:linear-gradient(135deg,#16a34a,#059669);border-color:#059669; }
-    .cb.checked::after {
-      content: "";
-      position:absolute;
-      width:10px; height:6px;
-      border-left:2px solid white;
-      border-bottom:2px solid white;
-      transform:rotate(-45deg);
-    }
-
-    .actions button{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px}
-
-    @media(max-width:980px){.app{grid-template-columns:1fr;}.player{height:210px}}
+    @media(max-width:980px){.app{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
   <h1>Minecraft 座標メモ</h1>
   <div class="app">
     <div class="card">
-      <div class="flexcol">
-        <label>Positions: X, Y, Z</label>
-        <div class="row">
-          <input class="InputNumber" type="text" placeholder="X">
-          <input class="InputNumber" type="text" placeholder="Y">
-          <input class="InputNumber" type="text" placeholder="Z">
-        </div>
+      <label>座標を入力 (X, Y, Z)</label>
+      <div class="row">
+        <input class="InputNumber" id="inputX" type="text" placeholder="X">
+        <input class="InputNumber" id="inputY" type="text" placeholder="Y">
+        <input class="InputNumber" id="inputZ" type="text" placeholder="Z">
+        <button id="addBtn">追加</button>
       </div>
+      <div class="list" id="posList"></div>
+    </div>
+    <div class="card">
+      <p style="margin:0;font-size:14px;color:var(--muted-2)">保存した座標はローカルに保存され、再読み込みしても残ります。</p>
     </div>
   </div>
 
   <script>
-    (function() {
+    (function(){
       const STORAGE_KEY = 'mc_local_positions_v1';
+      const $$ = sel => document.querySelector(sel);
       const $$$ = sel => [...document.querySelectorAll(sel)];
-      const uid = () => 'id-' + Math.random().toString(36).slice(2,9);
+      const uid = ()=>'id-'+Math.random().toString(36).slice(2,9);
 
-      // 数値入力（負の数対応）
-      $$$('.InputNumber').forEach(el => {
-        el.addEventListener('focus', () => el.select());
+      function load(){
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      }
+      function save(data){
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
 
-        el.addEventListener('input', () => {
-          let val = el.value.normalize('NFKC').replace(/[^0-9-]/g, '');
-          // - が途中にある場合は先頭に移動
-          if (val.indexOf('-') > 0) val = '-' + val.replace(/-/g, '');
-          // '-' 単体は入力途中として保持
-          if (val === '-' || val === '') {
-            el.value = val;
-            return;
-          }
-          const num = parseInt(val, 10);
-          el.value = !isNaN(num) ? num : '';
+      let state = load();
+
+      function render(){
+        const list = $$('#posList');
+        list.innerHTML = '';
+        state.forEach(item =>{
+          const div = document.createElement('div');
+          div.className = 'item';
+          div.innerHTML = `<div class="flexcol"><div class="coords">X:${item.x} Y:${item.y} Z:${item.z}</div><div class="meta">${item.id}</div></div>`;
+          const actions = document.createElement('div');
+          actions.className = 'actions';
+          const del = document.createElement('button');
+          del.textContent = '削除';
+          del.onclick = ()=>{
+            state = state.filter(p=>p.id!==item.id);
+            save(state);
+            render();
+          };
+          actions.appendChild(del);
+          div.appendChild(actions);
+          list.appendChild(div);
         });
+      }
+
+      function normalizeInput(el){
+        let val = el.value.normalize('NFKC').replace(/[^0-9-]/g,'');
+        if(val.indexOf('-')>0) val = '-' + val.replace(/-/g,'');
+        if(val==='-'||val===''){el.value = val; return;}
+        const num = parseInt(val,10);
+        el.value = !isNaN(num)?num:'';
+      }
+
+      $$$('.InputNumber').forEach(el=>{
+        el.addEventListener('focus',()=>el.select());
+        el.addEventListener('input',()=>normalizeInput(el));
       });
+
+      $$('#addBtn').onclick = ()=>{
+        const x=$$('#inputX').value;
+        const y=$$('#inputY').value;
+        const z=$$('#inputZ').value;
+        if(x===''||y===''||z==='') return;
+        state.push({id:uid(),x,y,z});
+        save(state);
+        render();
+        $$('#inputX').value='';
+        $$('#inputY').value='';
+        $$('#inputZ').value='';
+      };
+
+      render();
     })();
   </script>
 </body>
