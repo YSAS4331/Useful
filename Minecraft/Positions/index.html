@@ -90,13 +90,18 @@
             el.select();
           });
           el.addEventListener('input', () => {
-            let num = el.value.normalize('NFKC').replace(/(?!^-)[^0-9]/g, '');
-            if (num === '' || num === '-') {
-              el.value = '';
-              return;
+            let val = el.value.normalize('NFKC').replace(/[^0-9-]/g, '');
+            
+            if (val.indexOf('-') > 0) {
+              val = '-' + val.replace(/-/g, '');
             }
-            num = Number(num);
-            el.value = num;
+            
+            if (val === '-' || val === '') {
+            el.value = val;
+            return;
+            }
+            
+            el.value = Number(val);
           });
         });
       })();
