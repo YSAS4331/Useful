@@ -136,42 +136,59 @@
     return m ? m[0] : input;
   }
 
-  let state = {items: [], groups: ['すべて'] , filter: 'すべて'};
+  let state = {items: [], groups: ['すべて'], filter: 'すべて', showUncheckedOnly: false};
+
   function load(){
     const raw = localStorage.getItem(STORAGE_KEY);
     if(raw){ try{ const parsed = JSON.parse(raw); state = parsed; } catch(e){ console.error('storage parse error', e); }}
-    if(!state.groups) state.groups = ['すべて']; render();
+    if(!state.groups) state.groups = ['すべて'];
+    if(state.showUncheckedOnly===undefined) state.showUncheckedOnly=false;
+    render();
   }
   function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); renderCounts(); }
 
-  function render(){ renderGroupSelect(); renderGroupChips(); renderList(); renderCounts(); }
+  function render(){ renderGroupSelect(); renderGroupChips(); renderList(); renderCounts(); renderUncheckedToggle(); }
+
   function renderGroupSelect(){ const sel = $('groupSelect'); sel.innerHTML=''; state.groups.filter(g => g !== 'すべて').forEach(g => { const o = document.createElement('option'); o.value = g; o.textContent = g; sel.appendChild(o); }); }
 
   function renderGroupChips(){ const container = $('groupChips'); container.innerHTML=''; const groups = ['すべて', ...state.groups.filter(g=>g!=='すべて')]; groups.forEach(g => { const b = document.createElement('button'); b.className='chip'+(state.filter===g? ' active':''); b.textContent=g; b.addEventListener('click', ()=>{ state.filter = g; render(); $('currentFilter').textContent = g; }); container.appendChild(b); }); }
 
-  function renderList(){ const list = $('list'); list.innerHTML=''; const q = $('search').value.trim().toLowerCase(); const items = state.items.filter(it => { if(state.filter !== 'すべて' && it.group !== state.filter) return false; if(q && !it.title.toLowerCase().includes(q) && !it.id.toLowerCase().includes(q)) return false; return true; });
+  function renderUncheckedToggle(){
+    let el = $('uncheckedToggle');
+    if(el){ el.checked = state.showUncheckedOnly; }
+  }
+
+  function renderList(){
+    const list = $('list'); list.innerHTML='';
+    const q = $('search').value.trim().toLowerCase();
+    const items = state.items.filter(it => {
+      if(state.filter !== 'すべて' && !(it.groups||[it.group]).includes(state.filter)) return false;
+      if(state.showUncheckedOnly && it.done) return false;
+      if(q && !it.title.toLowerCase().includes(q) && !it.id.toLowerCase().includes(q)) return false;
+      return true;
+    });
     items.forEach(it => {
       const el = document.createElement('div'); el.className='item';
 
-      // dummy checkbox
       const cb = document.createElement('div'); cb.className = 'cb' + (it.done? ' checked' : ''); cb.setAttribute('role','button'); cb.setAttribute('aria-pressed', it.done ? 'true' : 'false');
       cb.addEventListener('click', ()=>{ it.done = !it.done; save(); render(); });
 
       const col = document.createElement('div'); col.className='flexcol'; col.style.flex='1';
       const t = document.createElement('div'); t.className='title'; t.textContent = it.title || '(タイトルなし)';
       t.addEventListener('click', ()=> loadPlayer(it.id));
-      const meta = document.createElement('div'); meta.className='meta'; meta.innerHTML = `<span class='muted'>ID:</span> ${it.id} &nbsp; <span class='muted'>グループ:</span> `;
+      const meta = document.createElement('div'); meta.className='meta';
+      meta.innerHTML = `<span class='muted'>ID:</span> ${it.id} &nbsp; <span class='muted'>グループ:</span> `;
 
       const groupSel = document.createElement('select');
       const groups = ['すべて', ...state.groups.filter(g=>g!=='すべて')];
-      groups.forEach(g => { const o=document.createElement('option'); o.value=g; o.textContent=g; if(g===it.group) o.selected=true; groupSel.appendChild(o); });
-      groupSel.addEventListener('change', ()=>{ it.group = groupSel.value; save(); });
+      groups.forEach(g => { const o=document.createElement('option'); o.value=g; o.textContent=g; if((it.groups||[it.group]).includes(g)) o.selected=true; groupSel.appendChild(o); });
+      groupSel.addEventListener('change', ()=>{ it.groups=[groupSel.value]; save(); });
       meta.appendChild(groupSel);
 
       col.appendChild(t); col.appendChild(meta);
 
       const actions = document.createElement('div'); actions.className='actions'; actions.style.display='flex'; actions.style.gap='6px';
-      const editBtn = document.createElement('button'); editBtn.textContent='編集'; editBtn.addEventListener('click', ()=>{ $('inputId').value = it.id; $('inputTitle').value = it.title; $('groupSelect').value = it.group==='すべて'? '': it.group; removeItem(it._uid); });
+      const editBtn = document.createElement('button'); editBtn.textContent='編集'; editBtn.addEventListener('click', ()=>{ $('inputId').value = it.id; $('inputTitle').value = it.title; $('groupSelect').value = it.groups && it.groups[0] && it.groups[0]!=='すべて'? it.groups[0] : ''; removeItem(it._uid); });
       const delBtn = document.createElement('button'); delBtn.textContent='削除'; delBtn.addEventListener('click', ()=>{ if(confirm('この動画を削除しますか？')){ removeItem(it._uid); } });
 
       actions.appendChild(editBtn); actions.appendChild(delBtn);
@@ -184,7 +201,7 @@
   function renderCounts(){ $('count').textContent = state.items.length }
 
   function addGroup(name){ name = (name||'').trim(); if(!name) return; if(state.groups.includes(name)) return; state.groups.push(name); save(); }
-  function addItem(id, title, group){ id = extractId(id); if(!id) return alert('IDが空です'); title = title || ''; group = group || 'すべて'; const it = { _uid: uid(), id, title, group, done:false, createdAt: Date.now() }; state.items.unshift(it); save(); }
+  function addItem(id, title, group){ id = extractId(id); if(!id) return alert('IDが空です'); title = title || ''; group = group || 'すべて'; const it = { _uid: uid(), id, title, groups:[group], done:false, createdAt: Date.now() }; state.items.unshift(it); save(); }
   function removeItem(uid){ state.items = state.items.filter(i => i._uid !== uid); save(); render(); }
   function loadPlayer(id){ const player = $('player'); player.innerHTML = ''; const iframe = document.createElement('iframe'); iframe.src = `https://www.youtube.com/embed/${id}?rel=0&autoplay=1`; iframe.allow = 'accelerometer; autoplay; fullScreen; clipboard-write; encrypted-media; gyroscope; picture-in-picture;'; iframe.title='YouTube player'; player.appendChild(iframe); }
 
@@ -196,11 +213,16 @@
   $('addGroupBtn').addEventListener('click', ()=>{ addGroup($('newGroup').value); $('newGroup').value=''; render(); });
   $('export').addEventListener('click', exportJson);
   $('import').addEventListener('click', importJson);
-  $('clearAll').addEventListener('click', ()=>{ if(confirm('本当にすべてのデータを削除しますか？')){ state = {items:[], groups:['すべて'], filter:'すべて'}; save(); render(); } });
+  $('clearAll').addEventListener('click', ()=>{ if(confirm('本当にすべてのデータを削除しますか？')){ state = {items:[], groups:['すべて'], filter:'すべて', showUncheckedOnly:false}; save(); render(); } });
   $('search').addEventListener('input', render);
   $('resetFilter').addEventListener('click', ()=>{ state.filter='すべて'; render(); $('currentFilter').textContent='すべて'; });
   $('inputId').addEventListener('keydown', e => { if(e.key==='Enter') $('addBtn').click(); });
   $('inputTitle').addEventListener('keydown', e => { if(e.key==='Enter') $('addBtn').click(); });
+
+  // unchecked toggle binding
+  if($('uncheckedToggle')){
+    $('uncheckedToggle').addEventListener('change', e=>{ state.showUncheckedOnly = e.target.checked; save(); render(); });
+  }
 
   // initial load
   load();
