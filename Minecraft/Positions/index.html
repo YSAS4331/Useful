@@ -31,6 +31,14 @@ button{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;c
 .card.big .button-list{display:flex;flex-direction:column;gap:6px;}
 .card.big .button-list button{background:rgba(125,211,252,0.2);border:1px solid rgba(125,211,252,0.5);border-radius:6px;padding:6px 10px;color:#042027;font-weight:500;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;transition:all 0.2s;}
 .card.big .button-list button:hover{white-space:normal;overflow-x:auto;}
+  .structure-buttons { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:12px; }
+.biome-buttons { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:12px; }
+.structure-buttons button { padding:6px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:#e6eef6; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+.biome-buttons button { padding:6px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:#e6eef6; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
+.structure-buttons button:hover { animation:scroll-text 3s linear infinite; }
+.biome-buttons button:hover { animation:scroll-text 3s linear infinite; }
+@keyframes scroll-text { 0% { transform:translateX(0); } 100% { transform:translateX(-100%); } }
+
   </style>
 </head>
 <body>
