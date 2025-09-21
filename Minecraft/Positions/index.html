@@ -5,38 +5,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    :root{
-      --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#7dd3fc; --chip-bg:rgba(255,255,255,0.03);
-      --chip-border:rgba(255,255,255,0.06); --text: #e6eef6; --muted-2:#bfc9d2;
-    }
-    *{box-sizing:border-box}
-    body{
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
-      margin:0;
-      background:linear-gradient(180deg,#071022 0%, #071727 100%);
-      color:var(--text);
-      min-height:100vh;
-      padding:28px;
-    }
-    h1{margin:0 0 16px;font-size:22px}
-    .app{max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:18px}
-    .card{background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 20px rgba(2,6,23,0.6)}
-    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    .row{display:flex;gap:8px}
-    input[type=text], select{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:inherit;outline:none;width:100%}
-    button{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;color:#042027;font-weight:600;cursor:pointer}
-    .list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:6px}
-    .hide{display:none !important;}
-
-    .item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.015),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
-    .coords{font-weight:600}
-    .meta{font-size:12px;color:var(--muted)}
-    .flexcol{display:flex;flex-direction:column}
-    .actions{margin-left:auto;display:flex;gap:6px}
-    .actions button{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px;font-size:12px}
-    .card.big {width:90%}
-    .center {position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);display:flex;justify-content:center;align-items:center;width: 100%;height:100%}
-    @media(max-width:980px){.app{grid-template-columns:1fr;}}
+:root{--bg:#0f1724;--card:#0b1220;--muted:#9aa4b2;--accent:#7dd3fc;--chip-bg:rgba(255,255,255,0.03);--chip-border:rgba(255,255,255,0.06);--text:#e6eef6;--muted-2:#bfc9d2;}
+*{box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;margin:0;background:linear-gradient(180deg,#071022 0%,#071727 100%);color:var(--text);min-height:100vh;padding:28px;}
+h1{margin:0 0 16px;font-size:22px;}
+.app{max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:18px;}
+.card{background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 20px rgba(2,6,23,0.6);}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
+.row{display:flex;gap:8px;}
+input[type=text],select{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:inherit;outline:none;width:100%;}
+button{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;color:#042027;font-weight:600;cursor:pointer;}
+.list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:6px;}
+.hide{display:none !important;}
+.item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.015),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02);}
+.coords{font-weight:600;}
+.meta{font-size:12px;color:var(--muted);}
+.flexcol{display:flex;flex-direction:column;}
+.actions{margin-left:auto;display:flex;gap:6px;}
+.actions button{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px;font-size:12px;}
+.card.big{width:90%;}
+.center{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;justify-content:center;align-items:center;width:100%;height:100%;}
+@media(max-width:980px){.app{grid-template-columns:1fr;}}
+.card.big .section{margin-bottom:12px;}
+.card.big .section p{margin:0 0 4px;font-weight:600;}
+.card.big .button-list{display:flex;flex-direction:column;gap:6px;}
+.card.big .button-list button{background:rgba(125,211,252,0.2);border:1px solid rgba(125,211,252,0.5);border-radius:6px;padding:6px 10px;color:#042027;font-weight:500;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;transition:all 0.2s;}
+.card.big .button-list button:hover{white-space:normal;overflow-x:auto;}
   </style>
 </head>
 <body>
@@ -70,83 +64,101 @@
   </div>
   <script>
     (function(){
-      const STORAGE_KEY = 'mc_local_positions_v1';
-      
-      const $$ = sel => document.querySelector(sel);
-      const $$$ = sel => [...document.querySelectorAll(sel)];
-      const uid = ()=>'id-'+Math.random().toString(36).slice(2,9);
+  const STORAGE_KEY='mc_local_positions_v1';
+  const PLACE_KEY='mc_last_place';
+  const $$=sel=>document.querySelector(sel);
+  const $$$=sel=>[...document.querySelectorAll(sel)];
+  const uid=()=> 'id-'+Math.random().toString(36).slice(2,9);
 
-      function load(){
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      }
-      function save(data){
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      }
+  function load(){return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}
+  function save(data){localStorage.setItem(STORAGE_KEY,JSON.stringify(data));}
+  function loadPlace(){return localStorage.getItem(PLACE_KEY)||'Places';}
+  function savePlace(val){localStorage.setItem(PLACE_KEY,val);}
 
-      let state = load();
+  let state=load();
 
-      function render(){
-        const list = $$('#posList');
-        list.innerHTML = '';
-        state.forEach(item =>{
-          const div = document.createElement('div');
-          div.className = 'item';
-          div.innerHTML = `<div class="flexcol"><div class="coords">X:${item.x} Y:${item.y} Z:${item.z}</div><div class="meta">${item.id} | ${item.dimension||'Overworld'}</div></div>`;
-          const actions = document.createElement('div');
-          actions.className = 'actions';
-          const del = document.createElement('button');
-          del.textContent = '削除';
-          del.onclick = ()=>{
-            state = state.filter(p=>p.id!==item.id);
-            save(state);
-            render();
-          };
-          actions.appendChild(del);
-          div.appendChild(actions);
-          list.appendChild(div);
-        });
-      }
+  function render(){
+    const list=$$('#posList');
+    list.innerHTML='';
+    state.forEach(item=>{
+      const div=document.createElement('div');
+      div.className='item';
+      div.innerHTML=`<div class="flexcol"><div class="coords">X:${item.x} Y:${item.y} Z:${item.z}</div><div class="meta">${item.id} | ${item.dimension||'Overworld'}</div></div>`;
+      const actions=document.createElement('div');
+      actions.className='actions';
+      const del=document.createElement('button');
+      del.textContent='削除';
+      del.onclick=()=>{state=state.filter(p=>p.id!==item.id);save(state);render();}
+      actions.appendChild(del);
+      div.appendChild(actions);
+      list.appendChild(div);
+    });
+  }
 
-      function normalizeInput(el){
-        let val = el.value.normalize('NFKC').replace(/[^0-9-]/g,'');
-        if(val.indexOf('-')>0) val = '-' + val.replace(/-/g,'');
-        if(val==='-'||val===''){el.value = val; return;}
-        const num = parseInt(val,10);
-        el.value = !isNaN(num)?num:'';
-      }
+  function normalizeInput(el){
+    let val=el.value.normalize('NFKC').replace(/[^0-9-]/g,'');
+    if(val.indexOf('-')>0) val='-'+val.replace(/-/g,'');
+    if(val==='-'||val===''){el.value=val;return;}
+    const num=parseInt(val,10);
+    el.value=!isNaN(num)?num:'';
+  }
 
-      $$$('.InputNumber').forEach(el=>{
-        el.addEventListener('focus',()=>el.select());
-        el.addEventListener('input',()=>normalizeInput(el));
-      });
+  $$$('.InputNumber').forEach(el=>{el.addEventListener('focus',()=>el.select());el.addEventListener('input',()=>normalizeInput(el));});
+  $$('#addBtn').onclick=()=>{
+    const x=$$('#inputX').value;
+    const y=$$('#inputY').value;
+    const z=$$('#inputZ').value;
+    const dim=$$('#dimensionSelect').value;
+    if(x===''||y===''||z==='') return;
+    state.push({id:uid(),x,y,z,dimension:dim});
+    save(state);
+    render();
+    $$('#inputX').value=''; $$('#inputY').value=''; $$('#inputZ').value='';
+  };
 
-      $$('#addBtn').onclick = ()=>{
-        const x=$$('#inputX').value;
-        const y=$$('#inputY').value;
-        const z=$$('#inputZ').value;
-        const dim=$$('#dimensionSelect').value;
-        if(x===''||y===''||z==='') return;
-        state.push({id:uid(),x,y,z,dimension:dim});
-        save(state);
-        render();
-        $$('#inputX').value='';
-        $$('#inputY').value='';
-        $$('#inputZ').value='';
-      };
+  const placeUI=$$('#Place_UI');
+  const placeCard=$$('#Place_UI .card.big');
+  const placeBtn=$$('#Place');
+  const structures=['Village','Pillager Outpost','Mineshaft','Temple','Shipwreck','Stronghold'];
+  const biomes=['Plains','Desert','Jungle','Savanna','Taiga','Snowy Tundra','Mushroom Fields'];
 
-      // Structures button listener only
-      $$('#Place').onclick = () => {
-        $$('#Place_UI').classList.remove('hide');
-      };
+  function buildPlaceUI(){
+    placeCard.innerHTML='';
+    const structSection=document.createElement('div'); structSection.className='section';
+    const p1=document.createElement('p'); p1.textContent='Structure'; structSection.appendChild(p1);
+    const structList=document.createElement('div'); structList.className='button-list';
+    structures.forEach(s=>{
+      const b=document.createElement('button'); b.textContent=s;
+      b.onclick=()=>{placeUI.classList.add('hide');placeBtn.textContent=s;savePlace(s);}
+      structList.appendChild(b);
+    });
+    structSection.appendChild(structList); placeCard.appendChild(structSection);
 
-      $$('#Place_UI').onclick = () => {
-        $$('#Place_UI').classList.add('hide');
-      };
+    const biomeSection=document.createElement('div'); biomeSection.className='section';
+    const p2=document.createElement('p'); p2.textContent='Biome'; biomeSection.appendChild(p2);
+    const biomeList=document.createElement('div'); biomeList.className='button-list';
+    biomes.forEach(bm=>{
+      const b=document.createElement('button'); b.textContent=bm;
+      b.onclick=()=>{placeUI.classList.add('hide');placeBtn.textContent=bm;savePlace(bm);}
+      biomeList.appendChild(b);
+    });
+    biomeSection.appendChild(biomeList); placeCard.appendChild(biomeSection);
+  }
 
-      $$('#Place_UI .card.big').onclick = (e) => e.stopPropagation();
+  placeBtn.onclick=()=>{
+    buildPlaceUI();
+    placeUI.classList.remove('hide');
+  };
 
-      render();
-    })();
+  placeUI.onclick=()=>{placeUI.classList.add('hide');};
+  placeCard.onclick=e=>e.stopPropagation();
+
+  // 初期文字を復元
+  placeBtn.textContent=loadPlace();
+
+  render();
+})();
+
   </script>
 </body>
 </html>
