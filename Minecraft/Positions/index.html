@@ -26,6 +26,7 @@
     input[type=text], select{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:8px;color:inherit;outline:none;width:100%}
     button{background:var(--accent);border:none;padding:8px 12px;border-radius:8px;color:#042027;font-weight:600;cursor:pointer}
     .list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:6px}
+    .hide{display:none}
 
     .item{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.015),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
     .coords{font-weight:600}
@@ -50,7 +51,7 @@
         <button id="addBtn">追加</button>
       </div>
       <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
-        <button id="Structures">Structures</button>
+        <button id="Place">Structures</button>
         <select id="dimensionSelect">
           <option value="overworld">Overworld</option>
           <option value="nether">Nether</option>
@@ -63,13 +64,14 @@
       <p style="margin:0;font-size:14px;color:var(--muted-2)">保存した座標はローカルに保存され、再読み込みしても残ります。</p>
     </div>
   </div>
-  <div class="center">
+  <div id="Place_UI" class="center hide">
     <div class="card big">
     </div>
   </div>
   <script>
     (function(){
       const STORAGE_KEY = 'mc_local_positions_v1';
+      
       const $$ = sel => document.querySelector(sel);
       const $$$ = sel => [...document.querySelectorAll(sel)];
       const uid = ()=>'id-'+Math.random().toString(36).slice(2,9);
@@ -133,10 +135,15 @@
       };
 
       // Structures button listener only
-      $$('#Structures').onclick = ()=>{
-        // Action will be defined later by user
-        console.log('Structures ボタンが押されました (listener ready)');
+      $$('#Place').onclick = () => {
+        $$('#Place_UI').classList.remove('hide');
       };
+
+      $$('#Place_UI').onclick = () => {
+        $$('#Place_UI').classList.add('hide');
+      };
+
+      $$('#Place_UI .card.big').onclick = (e) => e.stopPropagation();
 
       render();
     })();
