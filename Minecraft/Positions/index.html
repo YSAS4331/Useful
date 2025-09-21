@@ -33,6 +33,8 @@
     .flexcol{display:flex;flex-direction:column}
     .actions{margin-left:auto;display:flex;gap:6px}
     .actions button{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px;font-size:12px}
+    .card.big {width: 80%;max-width: 800px;}
+    .center {min-height: 100vh;display: flex;justify-content: center;align-items: center;}
 
     @media(max-width:980px){.app{grid-template-columns:1fr;}}
   </style>
@@ -62,7 +64,10 @@
       <p style="margin:0;font-size:14px;color:var(--muted-2)">保存した座標はローカルに保存され、再読み込みしても残ります。</p>
     </div>
   </div>
-
+  <div class="center">
+    <div class="card big">
+    </div>
+  </div>
   <script>
     (function(){
       const STORAGE_KEY = 'mc_local_positions_v1';
