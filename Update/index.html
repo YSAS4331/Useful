@@ -35,7 +35,20 @@
           if (!data) return;
           
           // 追加処理
-          
+          data.updates.forEach(update => {
+            const div = document.createElement('div');
+            div.classList.add('update');
+            const date = document.createElement('div');
+            date.classList.add('date');
+            const updateTime = document.createElement('time');
+            updateTime.dataTime = update.date;
+            updateTime.textContent = update.date;
+
+            date.appendChild(updateTime);
+            div.appendChild(date);
+
+            document.body.appendChild(div);
+          });
         } catch (e) {
           console.error('取得に失敗しました', e);
         }
