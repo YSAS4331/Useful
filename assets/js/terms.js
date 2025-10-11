@@ -17,7 +17,6 @@ class Terms extends HTMLElement {
         border-radius: 7px;
         resize: both;
         overflow: auto;
-        cursor: move;
         position: fixed;
         top: 50px;
         left: 50px;
@@ -27,21 +26,31 @@ class Terms extends HTMLElement {
       if (!$('terms-frame')) {
         document.body.appendChild(Frame);
 
-        // --- ドラッグ移動処理 ---
+        // --- ドラッグ用ヘッダーを追加 ---
+        const header = document.createElement('div');
+        header.style.cssText = `
+          width: 100%;
+          height: 20px;
+          position: absolute;
+          top: 0;
+          left: 0;
+          cursor: grab;
+          z-index: 10000;
+        `;
+        Frame.parentElement.insertBefore(header, Frame);
+
         let isDragging = false;
         let startX, startY, startLeft, startTop;
 
-        Frame.addEventListener('mousedown', e => {
-          // 右下のリサイズ操作を邪魔しないように
-          const rect = Frame.getBoundingClientRect();
-          if (e.offsetX > rect.width - 16 && e.offsetY > rect.height - 16) return;
-
+        header.addEventListener('mousedown', e => {
           isDragging = true;
           startX = e.clientX;
           startY = e.clientY;
+          const rect = Frame.getBoundingClientRect();
           startLeft = rect.left;
           startTop = rect.top;
-          Frame.style.cursor = 'grabbing';
+          header.style.cursor = 'grabbing';
+          e.preventDefault(); // iframeクリックで選択されないように
         });
 
         document.addEventListener('mousemove', e => {
@@ -53,7 +62,7 @@ class Terms extends HTMLElement {
         });
 
         document.addEventListener('mouseup', () => {
-          if (isDragging) Frame.style.cursor = 'move';
+          if (isDragging) header.style.cursor = 'grab';
           isDragging = false;
         });
       }
