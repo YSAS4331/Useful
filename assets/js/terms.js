@@ -62,7 +62,7 @@ class Terms extends HTMLElement {
       // 少し遅らせてアニメーションを発火
       requestAnimationFrame(() => {
         Frame.style.height = '161.8px';
-        Frame.sryle.transition = 'none';
+        Frame.style.transition = 'none';
       });
 
       // --- ドラッグ処理 ---
