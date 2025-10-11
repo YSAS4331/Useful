@@ -19,5 +19,27 @@
   </head>
   <body>
     <h1>更新履歴</h1>
+    <script>
+      (async () => {
+        const params = new URLSearchParams(window.location.search);
+        const app = params.get('app');
+  
+        if (!app) return;
+
+        try {
+          const response = await fetch('https://ysas4331.github.io/Useful/Update/updates.json');
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          const updates = await response.json();
+
+          const data = updates[app];
+          if (!data) return;
+          
+          // 追加処理
+          
+        } catch (e) {
+          console.error('取得に失敗しました', e);
+        }
+      })();
+    </script>
   </body>
 </html>
