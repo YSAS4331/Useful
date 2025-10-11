@@ -19,10 +19,12 @@
   </head>
   <body>
     <h1>更新履歴</h1>
+    <div id='updates'></div>
     <script>
       (async () => {
         const params = new URLSearchParams(window.location.search);
         const app = params.get('app');
+        const box = document.getElementById('updates');
   
         if (!app) return;
 
@@ -47,7 +49,7 @@
             date.appendChild(updateTime);
             div.appendChild(date);
 
-            document.body.appendChild(div);
+            box.appendChild(div);
           });
         } catch (e) {
           console.error('取得に失敗しました', e);
