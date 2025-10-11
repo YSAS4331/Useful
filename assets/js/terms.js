@@ -15,7 +15,11 @@ class Terms extends HTMLElement {
         height: 161.8px;
         border: 2px solid black;
         border-radius: 7px;
+        resize: both;        /* ← リサイズ可能にする */
+        overflow: auto;      /* ← 必須（これがないと効かない） */
+        cursor: se-resize;   /* ← 右下にマウスを置いたときのカーソル */
       `;
+
       if (!$('terms-frame')) document.body.appendChild(Frame);
     });
   }
