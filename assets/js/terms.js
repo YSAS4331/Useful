@@ -7,74 +7,78 @@ class Terms extends HTMLElement {
     const btn = this.querySelector('#terms');
 
     btn.addEventListener('click', () => {
-      if ($('terms-wrapper')) return; // 既にある場合は何もしない
-
-      // --- ラッパー作成 ---
-      const wrapper = document.createElement('div');
-      wrapper.id = 'terms-wrapper';
-      wrapper.style.cssText = `
-        position: fixed;
-        top: 50px;
-        left: 50px;
-        z-index: 9999;
-        width: 100px;
-      `;
-
-      // --- iframe 作成 ---
-      const Frame = document.createElement('iframe');
+      const Frame = $('terms-frame') || document.createElement('iframe');
       Frame.id = 'terms-frame';
       Frame.src = 'https://ysas4331.github.io/Useful/terms';
       Frame.style.cssText = `
-        width: 100%;
+        width: 100px;
         height: 161.8px;
         border: 2px solid black;
         border-radius: 7px;
         resize: both;
         overflow: auto;
+        position: fixed;
+        top: 50px;
+        left: 50px;
+        z-index: 9999;
+        cursor: move;
       `;
 
-      // --- ドラッグ用ヘッダー作成 ---
-      const header = document.createElement('div');
-      header.style.cssText = `
-        width: 100%;
-        height: 20px;
-        cursor: grab;
-        background: rgba(0,0,0,0.1);
-        border-top-left-radius: 7px;
-        border-top-right-radius: 7px;
-      `;
+      if (!$('terms-frame')) {
+        document.body.appendChild(Frame);
 
-      wrapper.appendChild(header);
-      wrapper.appendChild(Frame);
-      document.body.appendChild(wrapper);
+        // --- ドラッグ処理 ---
+        let isDragging = false;
+        let startX, startY, startLeft, startTop;
+        let overlay;
 
-      // --- ドラッグ処理 ---
-      let isDragging = false;
-      let startX, startY, startLeft, startTop;
+        Frame.addEventListener('mousedown', e => {
+          // 右下のリサイズ操作を邪魔しないように
+          const rect = Frame.getBoundingClientRect();
+          if (e.offsetX > rect.width - 16 && e.offsetY > rect.height - 16) return;
 
-      header.addEventListener('mousedown', e => {
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        const rect = wrapper.getBoundingClientRect();
-        startLeft = rect.left;
-        startTop = rect.top;
-        header.style.cursor = 'grabbing';
-        e.preventDefault();
-      });
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          startLeft = rect.left;
+          startTop = rect.top;
 
-      document.addEventListener('mousemove', e => {
-        if (!isDragging) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        wrapper.style.left = `${startLeft + dx}px`;
-        wrapper.style.top = `${startTop + dy}px`;
-      });
+          // --- オーバーレイ作成 ---
+          overlay = document.createElement('div');
+          overlay.style.cssText = `
+            position: fixed;
+            top: ${rect.top}px;
+            left: ${rect.left}px;
+            width: ${rect.width}px;
+            height: ${rect.height}px;
+            z-index: 10000;
+            cursor: move;
+            background: rgba(0,0,0,0);
+          `;
+          document.body.appendChild(overlay);
 
-      document.addEventListener('mouseup', () => {
-        if (isDragging) header.style.cursor = 'grab';
-        isDragging = false;
-      });
+          e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', e => {
+          if (!isDragging) return;
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          Frame.style.left = `${startLeft + dx}px`;
+          Frame.style.top = `${startTop + dy}px`;
+          if (overlay) {
+            overlay.style.left = `${startLeft + dx}px`;
+            overlay.style.top = `${startTop + dy}px`;
+          }
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (isDragging) {
+            isDragging = false;
+            if (overlay) document.body.removeChild(overlay);
+          }
+        });
+      }
     });
   }
 }
