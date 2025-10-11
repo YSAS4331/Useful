@@ -12,7 +12,7 @@ class Terms extends HTMLElement {
         // --- アニメーションして閉じる ---
         const iframe = existing.querySelector('iframe');
         iframe.style.transition = 'height 0.5s ease';
-        Frame.style.minHeight = '0';
+        iframe.style.minHeight = '0';
         iframe.style.height = '0';
         setTimeout(() => {
           document.body.removeChild(existing);
