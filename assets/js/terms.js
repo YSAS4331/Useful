@@ -11,6 +11,7 @@ class Terms extends HTMLElement {
       if (existing) {
         // --- アニメーションして閉じる ---
         const iframe = existing.querySelector('iframe');
+        iframe.style.transition = 'height 0.5s ease';
         iframe.style.height = '0';
         setTimeout(() => {
           document.body.removeChild(existing);
