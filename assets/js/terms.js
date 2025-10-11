@@ -26,7 +26,7 @@ class Terms extends HTMLElement {
         position: fixed;
         top: 50px;
         left: 50px;
-        width: 100px;
+        width: 250px;
         z-index: 9999;
       `;
 
@@ -62,7 +62,7 @@ class Terms extends HTMLElement {
 
       // 少し遅らせてアニメーションを発火
       requestAnimationFrame(() => {
-        Frame.style.height = '161.8px';
+        Frame.style.height = '404.5px';
       });
       Frame.addEventListener('transitionend', () => {
         Frame.style.transition = 'none';
