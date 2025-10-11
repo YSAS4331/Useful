@@ -10,12 +10,10 @@ class Terms extends HTMLElement {
       const Frame = $('terms-frame') || document.createElement('iframe');
       Frame.id = 'terms-frame';
       Frame.src = 'https://ysas4331.github.io/Useful/terms';
-      Frame.style = `
-      width: 100px;
-      height: 161.8px;
-      border: 2px black solid;
-      border-radius: 7px;
-      `
+      Frame.style.width = '100px';
+      Frame.style.height = '161.8px';
+      Frame.style.border = '2px solid black';
+      Frame.style.borderRadius = '7px';
       if (!$('terms-frame')) document.body.appendChild(Frame);
     })
   }
