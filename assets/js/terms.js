@@ -12,6 +12,7 @@ class Terms extends HTMLElement {
         // --- アニメーションして閉じる ---
         const iframe = existing.querySelector('iframe');
         iframe.style.transition = 'height 0.5s ease';
+        Frame.style.minHeight = '0px';
         iframe.style.height = '0';
         setTimeout(() => {
           document.body.removeChild(existing);
@@ -54,6 +55,7 @@ class Terms extends HTMLElement {
         resize: both;
         overflow: auto;
         display: block;
+        min-width: 100%;
         transition: height 0.5s ease;
       `;
 
@@ -64,6 +66,7 @@ class Terms extends HTMLElement {
       // 少し遅らせてアニメーションを発火
       requestAnimationFrame(() => {
         Frame.style.height = '404.5px';
+        Frame.style.minHeight = '404.5px';
       });
       Frame.addEventListener('transitionend', () => {
         Frame.style.transition = 'none';
