@@ -15,12 +15,48 @@ class Terms extends HTMLElement {
         height: 161.8px;
         border: 2px solid black;
         border-radius: 7px;
-        resize: both;        /* ← リサイズ可能にする */
-        overflow: auto;      /* ← 必須（これがないと効かない） */
-        cursor: se-resize;   /* ← 右下にマウスを置いたときのカーソル */
+        resize: both;
+        overflow: auto;
+        cursor: move;
+        position: fixed;
+        top: 50px;
+        left: 50px;
+        z-index: 9999;
       `;
 
-      if (!$('terms-frame')) document.body.appendChild(Frame);
+      if (!$('terms-frame')) {
+        document.body.appendChild(Frame);
+
+        // --- ドラッグ移動処理 ---
+        let isDragging = false;
+        let startX, startY, startLeft, startTop;
+
+        Frame.addEventListener('mousedown', e => {
+          // 右下のリサイズ操作を邪魔しないように
+          const rect = Frame.getBoundingClientRect();
+          if (e.offsetX > rect.width - 16 && e.offsetY > rect.height - 16) return;
+
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          startLeft = rect.left;
+          startTop = rect.top;
+          Frame.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', e => {
+          if (!isDragging) return;
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          Frame.style.left = `${startLeft + dx}px`;
+          Frame.style.top = `${startTop + dy}px`;
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (isDragging) Frame.style.cursor = 'move';
+          isDragging = false;
+        });
+      }
     });
   }
 }
