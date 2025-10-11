@@ -9,8 +9,12 @@ class Terms extends HTMLElement {
     btn.addEventListener('click', () => {
       const existing = $('terms-wrapper');
       if (existing) {
-        // 既に表示されていれば削除（トグル）
-        document.body.removeChild(existing);
+        // --- アニメーションして閉じる ---
+        const iframe = existing.querySelector('iframe');
+        iframe.style.height = '0';
+        setTimeout(() => {
+          document.body.removeChild(existing);
+        }, 500); // transition時間と合わせる
         return;
       }
 
@@ -42,17 +46,23 @@ class Terms extends HTMLElement {
       Frame.src = 'https://ysas4331.github.io/Useful/terms';
       Frame.style.cssText = `
         width: 100%;
-        height: 161.8px;
+        height: 0;
         border: 2px solid black;
         border-radius: 0 7px 7px 7px;
         resize: both;
         overflow: auto;
         display: block;
+        transition: height 0.5s ease;
       `;
 
       wrapper.appendChild(header);
       wrapper.appendChild(Frame);
       document.body.appendChild(wrapper);
+
+      // 少し遅らせてアニメーションを発火
+      requestAnimationFrame(() => {
+        Frame.style.height = '161.8px';
+      });
 
       // --- ドラッグ処理 ---
       let isDragging = false;
@@ -67,9 +77,8 @@ class Terms extends HTMLElement {
         startTop = rect.top;
 
         header.style.cursor = 'grabbing';
-        // ドラッグ中は iframe のマウスイベントを無効化
         Frame.style.pointerEvents = 'none';
-        e.preventDefault(); // 選択防止
+        e.preventDefault();
       });
 
       document.addEventListener('mousemove', e => {
@@ -83,7 +92,6 @@ class Terms extends HTMLElement {
       document.addEventListener('mouseup', () => {
         if (isDragging) header.style.cursor = 'grab';
         isDragging = false;
-        // iframe を再び操作可能に
         Frame.style.pointerEvents = 'auto';
       });
     });
