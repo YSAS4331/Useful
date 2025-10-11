@@ -28,6 +28,7 @@ class Terms extends HTMLElement {
         left: 50px;
         width: 250px;
         z-index: 9999;
+        box-shadow: 3px 3px 2px black;
       `;
 
       // --- ドラッグ用ヘッダー ---
@@ -39,7 +40,6 @@ class Terms extends HTMLElement {
         cursor: grab;
         border-top-left-radius: 7px;
         border-top-right-radius: 7px;
-        box-shadow: 3px 3px 2px black;
       `;
 
       // --- iframe ---
