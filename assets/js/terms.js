@@ -7,78 +7,94 @@ class Terms extends HTMLElement {
     const btn = this.querySelector('#terms');
 
     btn.addEventListener('click', () => {
-      const Frame = $('terms-frame') || document.createElement('iframe');
-      Frame.id = 'terms-frame';
-      Frame.src = 'https://ysas4331.github.io/Useful/terms';
-      Frame.style.cssText = `
-        width: 100px;
-        height: 161.8px;
-        border: 2px solid black;
-        border-radius: 7px;
-        resize: both;
-        overflow: auto;
+      if ($('terms-wrapper')) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.id = 'terms-wrapper';
+      wrapper.style.cssText = `
         position: fixed;
         top: 50px;
         left: 50px;
+        width: 100px;
         z-index: 9999;
-        cursor: move;
       `;
 
-      if (!$('terms-frame')) {
-        document.body.appendChild(Frame);
+      const header = document.createElement('div');
+      header.style.cssText = `
+        width: 100%;
+        height: 20px;
+        background: rgba(0,0,0,0.1);
+        cursor: grab;
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
+      `;
 
-        // --- ドラッグ処理 ---
-        let isDragging = false;
-        let startX, startY, startLeft, startTop;
-        let overlay;
+      const Frame = document.createElement('iframe');
+      Frame.id = 'terms-frame';
+      Frame.src = 'https://ysas4331.github.io/Useful/terms';
+      Frame.style.cssText = `
+        width: 100%;
+        height: 161.8px;
+        border: 2px solid black;
+        border-radius: 0 0 7px 7px;
+        resize: both;
+        overflow: auto;
+      `;
 
-        Frame.addEventListener('mousedown', e => {
-          // 右下のリサイズ操作を邪魔しないように
-          const rect = Frame.getBoundingClientRect();
-          if (e.offsetX > rect.width - 16 && e.offsetY > rect.height - 16) return;
+      wrapper.appendChild(header);
+      wrapper.appendChild(Frame);
+      document.body.appendChild(wrapper);
 
-          isDragging = true;
-          startX = e.clientX;
-          startY = e.clientY;
-          startLeft = rect.left;
-          startTop = rect.top;
+      let isDragging = false;
+      let startX, startY, startLeft, startTop;
+      let overlay;
 
-          // --- オーバーレイ作成 ---
-          overlay = document.createElement('div');
-          overlay.style.cssText = `
-            position: fixed;
-            top: ${rect.top}px;
-            left: ${rect.left}px;
-            width: ${rect.width}px;
-            height: ${rect.height}px;
-            z-index: 10000;
-            cursor: move;
-            background: rgba(0,0,0,0);
-          `;
-          document.body.appendChild(overlay);
+      header.addEventListener('mousedown', e => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = wrapper.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        header.style.cursor = 'grabbing';
 
-          e.preventDefault();
-        });
+        // --- ドラッグ中オーバーレイ作成 ---
+        overlay = document.createElement('div');
+        overlay.style.cssText = `
+          position: fixed;
+          top: ${rect.top}px;
+          left: ${rect.left}px;
+          width: ${rect.width}px;
+          height: ${rect.height}px;
+          z-index: 10000;
+          background: rgba(0,0,0,0);
+          cursor: grabbing;
+        `;
+        document.body.appendChild(overlay);
 
-        document.addEventListener('mousemove', e => {
-          if (!isDragging) return;
-          const dx = e.clientX - startX;
-          const dy = e.clientY - startY;
-          Frame.style.left = `${startLeft + dx}px`;
-          Frame.style.top = `${startTop + dy}px`;
-          if (overlay) {
-            overlay.style.left = `${startLeft + dx}px`;
-            overlay.style.top = `${startTop + dy}px`;
-          }
-        });
+        e.preventDefault();
+      });
 
-        document.addEventListener('mouseup', () => {
-          if (isDragging) {
-            isDragging = false;
-            if (overlay) document.body.removeChild(overlay);
-          }
-        });
-      }
+      document.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        wrapper.style.left = `${startLeft + dx}px`;
+        wrapper.style.top = `${startTop + dy}px`;
+        if (overlay) {
+          overlay.style.left = `${startLeft + dx}px`;
+          overlay.style.top = `${startTop + dy}px`;
+        }
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (isDragging) header.style.cursor = 'grab';
+        isDragging = false;
+        if (overlay) {
+          document.body.removeChild(overlay);
+          overlay = null;
+        }
+      });
     });
   }
 }
