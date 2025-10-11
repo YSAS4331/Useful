@@ -39,6 +39,7 @@ class Terms extends HTMLElement {
         cursor: grab;
         border-top-left-radius: 7px;
         border-top-right-radius: 7px;
+        box-shadow: 3px 3px 2px black;
       `;
 
       // --- iframe ---
