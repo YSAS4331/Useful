@@ -36,7 +36,7 @@ class Terms extends HTMLElement {
         width: 100%;
         height: 161.8px;
         border: 2px solid black;
-        border-radius: 7px;
+        border-radius: 0 7px 7px 7px;
         resize: both;
         overflow: auto;
         display: block;
