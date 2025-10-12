@@ -29,7 +29,6 @@ class Terms extends HTMLElement {
         left: 50px;
         width: 250px;
         z-index: 9999;
-        box-shadow: 3px 3px 2px black;
       `;
 
       // --- ドラッグ用ヘッダー ---
@@ -57,6 +56,7 @@ class Terms extends HTMLElement {
         display: block;
         min-width: 100%;
         transition: height 0.5s ease;
+        box-shadow: 3px 3px 2px black;
       `;
 
       wrapper.appendChild(header);
