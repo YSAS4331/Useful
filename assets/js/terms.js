@@ -66,10 +66,10 @@ class Terms extends HTMLElement {
       // 少し遅らせてアニメーションを発火
       requestAnimationFrame(() => {
         Frame.style.height = '404.5px';
-        Frame.style.minHeight = '404.5px';
       });
       Frame.addEventListener('transitionend', () => {
         Frame.style.transition = 'none';
+        Frame.style.minHeight = '404.5px';
       }, { once: true });
 
       // --- ドラッグ処理 ---
