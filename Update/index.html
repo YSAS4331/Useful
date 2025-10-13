@@ -70,7 +70,7 @@
           sortedUpdates.forEach((update, i) => {
             const div = document.createElement('div');
             div.classList.add('update');
-            div.addEventListener(click, () => {
+            div.addEventListener('click', () => {
               window.location = `https://ysas4331.github.io/Useful/Update/?app=${app}&n=${i + 1}`
             });
 
