@@ -1,14 +1,13 @@
 const c = el => document.createElement(el);
 
 const pts = localStorage.getItem('pts');
-if (!pts) { showToggleMenu(); }
+if (pts === null) { showToggleMenu(); }
 else {
   const side = c('aside');
   document.body.appendChild(side);
   const ShowPts = c('p');
-  side.appendChild('ShowPts');
+  side.appendChild(ShowPts);
   animateCount(0, 10000, ShowPts);
-  
 }
 
 function showToggleMenu() {
