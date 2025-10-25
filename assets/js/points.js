@@ -4,6 +4,9 @@ const pts = localStorage.getItem('pts');
 if (!pts) { showToggleMenu(); }
 else {
   const side = c('aside');
+  document.body.appendChild(side);
+  const ShowPts = c('p');
+  animateCount(0, pts, ShowPts);
 }
 
 function showToggleMenu() {
