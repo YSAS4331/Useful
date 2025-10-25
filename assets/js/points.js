@@ -1,7 +1,10 @@
 const c = el => document.createElement(el);
 
 const pts = localStorage.getItem('pts');
-if (!pts) showToggleMenu();
+if (!pts) { showToggleMenu(); }
+else {
+  
+}
 
 function showToggleMenu() {
   // === オーバーレイ作成 ===
@@ -37,4 +40,23 @@ function showToggleMenu() {
     overlay.remove();
     div.remove();
   });
+}
+
+function animateCount(start, end, el) {
+  let current = start;
+
+  function update() {
+    current += (end - current) / 5;
+
+    el.textContent = Math.round(current);
+
+    // ある程度近づいたら終了（無限ループ防止）
+    if (Math.abs(end - current) > 0.01) {
+      requestAnimationFrame(update);
+    } else {
+      el.textContent = Math.round(end); // 最終値を保証
+    }
+  }
+
+  update();
 }
