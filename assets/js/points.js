@@ -1,6 +1,6 @@
 const c = el => document.createElement(el);
 
-// localStorage.removeItem('pts'); // ← デバッグ用（毎回表示したい時に有効）
+// localStorage.removeItem('pts'); // ← デバッグ用（毎回表示したいときに有効）
 
 const pts = localStorage.getItem('pts');
 if (!pts) showToggleMenu();
@@ -25,17 +25,12 @@ function showToggleMenu() {
 
   document.body.appendChild(div);
 
-  // --- ボタン動作 ---
   const btn = div.querySelector('#confirmBtn');
   const chk = div.querySelector('#usePoints');
 
   btn.addEventListener('click', () => {
-    if (!chk.checked) {
-      alert('ポイント機能を利用する場合はチェックを入れてください。');
-      return;
-    }
-
-    localStorage.setItem('pts', 'enabled');
-    div.remove(); // モーダルを閉じる
+    const value = chk.checked ? 'enabled' : 'disabled';
+    localStorage.setItem('pts', value);
+    div.remove();
   });
 }
