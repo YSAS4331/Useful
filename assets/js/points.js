@@ -1,4 +1,5 @@
 const c = el => document.createElement(el);
+localStorage.removeItem('pts');
 
 const pts = localStorage.getItem('pts');
 if (!pts) {
