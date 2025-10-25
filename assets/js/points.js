@@ -1,6 +1,6 @@
 const c = el => document.createElement(el);
 
-// localStorage.removeItem('pts'); // ← デバッグ用（毎回表示したいときに有効）
+localStorage.removeItem('pts'); // ← デバッグ用（毎回表示したいときに有効）
 
 const pts = localStorage.getItem('pts');
 if (!pts) showToggleMenu();
