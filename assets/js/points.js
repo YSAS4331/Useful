@@ -3,7 +3,7 @@ const c = el => document.createElement(el);
 const pts = localStorage.getItem('pts');
 if (!pts) { showToggleMenu(); }
 else {
-  
+  const side = c('aside');
 }
 
 function showToggleMenu() {
@@ -39,6 +39,7 @@ function showToggleMenu() {
     localStorage.setItem('pts', value);
     overlay.remove();
     div.remove();
+    window.location.reload();
   });
 }
 
