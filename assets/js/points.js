@@ -17,7 +17,7 @@ function showToggleMenu() {
   div.innerHTML = `
     <p>
       当ツールでは、ポイント機能を活用することで、ユーザー体験の向上を目指しております。<br>
-      詳細につきましては、<a href="https://ysas4331.github.io/Useful/terms#points">こちら</a>をご覧ください。
+      詳細につきましては、<a href="https://ysas4331.github.io/Useful/terms#points" target="_blank">こちら</a>をご覧ください。
     </p>
 
     <label class="option">
