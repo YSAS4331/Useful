@@ -1,3 +1,12 @@
+/* === オーバーレイ背景 === */
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+  z-index: 999; /* 一番上 */
+}
+
 /* === トグルメニュー === */
 #ptsToggle {
   position: fixed;
@@ -5,7 +14,7 @@
   top: 50%;
   transform: translate(-50%, -50%) scale(1);
   width: 90vw;
-  max-width: 500px;
+  max-width: 480px;
   background: var(--chip-bg);
   border: 2px solid var(--chip-border);
   border-radius: 16px;
@@ -14,6 +23,7 @@
   backdrop-filter: blur(12px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
   animation: fadeIn 0.3s ease;
+  z-index: 1000; /* overlayより上 */
 }
 
 #ptsToggle::before {
@@ -58,7 +68,7 @@
   cursor: pointer;
 }
 
-/* === 確定ボタン === */
+/* === ボタン === */
 #confirmBtn {
   display: block;
   width: 100%;
