@@ -6,6 +6,12 @@
 #ptsToggle {
   background: var(--chip-bg);
   border: 2px solid var(--chip-border);
+  border-radius: 12px;
+  display: flex;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 90vw;
   height: 90vh
 }
