@@ -1,14 +1,16 @@
 const c = el => document.createElement(el);
-
-const pts = localStorage.getItem('pts');
-if (pts === null) { showToggleMenu(); }
-else {
-  const side = c('aside');
-  document.body.appendChild(side);
-  const ShowPts = c('p');
-  side.appendChild(ShowPts);
-  animateCount(0, 10000, ShowPts);
-}
+(() => {
+  const pts = localStorage.getItem('pts');
+  if (pts === null) { showToggleMenu(); }
+  else {
+    const side = c('aside');
+    document.body.appendChild(side);
+    if (pts === 'false') return;
+    const ShowPts = c('p');
+    side.appendChild(ShowPts);
+    animateCount(0, pts, ShowPts);
+  }
+})();
 
 function showToggleMenu() {
   // === オーバーレイ作成 ===
