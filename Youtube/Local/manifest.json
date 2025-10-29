@@ -1,0 +1,15 @@
+{
+  "name": "Useful Tools - YouTubeローカルプレイリスト",
+  "short_name": "YT Local",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff0000",
+  "icons": [
+    {
+      "src": "/imgs/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
