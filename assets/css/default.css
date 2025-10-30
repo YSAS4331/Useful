@@ -1,0 +1,88 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+  z-index: 999; /* 一番上 */
+}
+ .overlayMenu{
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  width: 90vw;
+  max-width: 480px;
+  background: var(--chip-bg);
+  border: 2px solid var(--chip-border);
+  border-radius: 16px;
+  padding: 2em;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.3s ease;
+  z-index: 1000; /* overlayより上 */
+}
+.overlayMenu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #071022 0%, #071727 100%);
+  z-index: -1;
+  border-radius: 16px;
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 1em 0;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.overlayMenu p {
+  line-height: 1.6;
+  font-size: 0.95rem;
+  color: var(--muted-2);
+}
+
+.overlayMenu a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.overlayMenu a:hover {
+  text-decoration: underline;
+}
+.overlayMenu button {
+  display: block;
+  width: 100%;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8em;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.overlayMenu button:hover {
+  background: #9de8ff;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
