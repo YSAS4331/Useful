@@ -42,10 +42,5 @@ function showTransferMenu() {
   const chk = div.querySelector('#usePoints');
 
   btn.addEventListener('click', () => {
-    const value = chk.checked ? '0' : false;
-    localStorage.setItem('pts', value);
-    overlay.remove();
-    div.remove();
-    window.location.reload();
   });
 }
