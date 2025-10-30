@@ -3,7 +3,7 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(3px);
-  z-index: 999; /* 一番上 */
+  z-index: 99999; /* 一番上 */
 }
  .overlayMenu{
   position: fixed;
@@ -20,7 +20,7 @@
   backdrop-filter: blur(12px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
   animation: fadeIn 0.3s ease;
-  z-index: 1000; /* overlayより上 */
+  z-index: 100000; /* overlayより上 */
 }
 .overlayMenu::before {
   content: '';
