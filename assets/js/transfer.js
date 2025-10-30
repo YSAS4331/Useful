@@ -36,8 +36,18 @@ function showTransferMenu() {
   `;
   document.body.appendChild(div);
 
-  const btn = div.querySelector('#transferUrl');
+  const url = div.querySelector('#transferUrl');
+  const qr = div.querySelector('#transferQr');
 
-  btn.addEventListener('click', () => {
+  url.addEventListener('click', () => {
+    removeOverLay();
   });
+  qr.addEventListener('click', () => {
+    removeOverLay();
+  });
+
+  function removeOverLay() {
+    overlay.remove();
+    div.remove();
+  }
 }
