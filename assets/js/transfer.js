@@ -27,8 +27,10 @@ function showTransferMenu() {
       どちらの形式でデータ移行しますか？
     </p>
 
-    <button id="transferUrl">URLで移行</button>
-    <button id="transferQr">QRで移行</button>
+    <span id="transferFlex">
+      <button id="transferUrl">URLで移行</button>
+      <button id="transferQr">QRで移行</button>
+    </span>
   `;
   document.body.appendChild(div);
 
