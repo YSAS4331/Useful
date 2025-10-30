@@ -31,6 +31,8 @@ function showTransferMenu() {
       <button id="transferUrl">URLで移行</button>
       <button id="transferQr">QRで移行</button>
     </span>
+
+    <span class="hint">QRコードは株式会社デンソーウェーブの登録商標です</span>
   `;
   document.body.appendChild(div);
 
