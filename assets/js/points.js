@@ -15,12 +15,12 @@ const c = el => document.createElement(el);
 function showToggleMenu() {
   // === オーバーレイ作成 ===
   const overlay = c('div');
-  overlay.id = 'overlay';
+  overlay.className = 'overlay';
   document.body.appendChild(overlay);
 
   // === モーダル作成 ===
   const div = c('div');
-  div.id = 'ptsToggle';
+  div.className = 'overlayMenu';
   div.innerHTML = `
     <p>
       当ツールでは、ポイント機能を活用することで、ユーザー体験の向上を目指しております。<br>
