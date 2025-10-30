@@ -27,7 +27,7 @@ function showTransferMenu() {
       どちらの形式でデータ移行しますか？
     </p>
 
-    <span id="transferFlex">
+    <span class="overlayFlex">
       <button id="transferUrl">URLで移行</button>
       <button id="transferQr">QRで移行</button>
     </span>
