@@ -6,7 +6,7 @@ class Transfer extends HTMLElement {
     const btn = this.querySelector('#transfer');
 
     btn.addEventListener('click', () => {
-      
+      showTransferMenu();
     });
   }
 }
