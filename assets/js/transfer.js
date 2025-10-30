@@ -24,22 +24,15 @@ function showTransferMenu() {
   div.className = 'overlayMenu';
   div.innerHTML = `
     <p>
-      当ツールでは、ポイント機能を活用することで、ユーザー体験の向上を目指しております。<br>
-      詳細につきましては、<a href="https://ysas4331.github.io/Useful/terms#points" target="_blank">こちら</a>をご覧ください。
+      どちらの形式でデータ移行しますか？
     </p>
 
-    <label class="option">
-      <input type="checkbox" id="usePoints">
-      ポイント機能を利用します
-    </label>
-
-    <button id="confirmBtn">確定</button>
+    <button id="transferUrl">URLで移行</button>
+    <button id="transferQr">QRで移行</button>
   `;
   document.body.appendChild(div);
 
-  // === イベント設定 ===
-  const btn = div.querySelector('#confirmBtn');
-  const chk = div.querySelector('#usePoints');
+  const btn = div.querySelector('#transferUrl');
 
   btn.addEventListener('click', () => {
   });
