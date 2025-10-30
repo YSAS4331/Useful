@@ -75,7 +75,13 @@
 .overlayMenu button:hover {
   background: #9de8ff;
 }
-
+.overlayFlex {
+  display: flex;
+  gap: 10px;
+}
+.overlayFlex * {
+  flex: 1;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;
