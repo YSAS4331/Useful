@@ -19,8 +19,12 @@ class Transfer extends HTMLElement {
   
       <span class="hint">QRコードは株式会社デンソーウェーブの登録商標です</span>
       `;
-      const url = $('#transferUrl', popup.div);
-      const qr = $('#transferQr', popup.div);
+      $$('button', popup.div).forEach(el => {
+        el.addEventListener('click', () => {
+          popup.removeOverLay();
+        });
+      });
+
     });
   }
 }
