@@ -32,6 +32,7 @@ class Transfer extends HTMLElement {
             <input type="checkbox" checked>
             パスワードを使用
           </label>
+          <button>次へ</button>
           `;
           popup.removeOverLay();
           const UsePass = $('input[type="checkbox"]', popup2.div);
