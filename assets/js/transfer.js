@@ -26,8 +26,12 @@ class Transfer extends HTMLElement {
           <p>
             一時パスワードを入力:
           </p>
-          <input type="password">
-          <span><input type="checkbox">パスワードを使用します</span>
+          <p><input type="password"></p>
+          
+          <label class="option">
+            <input type="checkbox">
+            パスワードを使用
+          </label>
           `;
           popup.removeOverLay();
         });
