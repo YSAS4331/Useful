@@ -44,17 +44,33 @@
   accent-color: var(--accent);
   cursor: pointer;
 }
+.option input[type="text"],
+.option input[type="password"] {
+  width: 100%;
+  padding: 0.6em 0.8em;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--chip-border);
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.2s, background 0.2s;
+}
+
+.option input[type="text"]:focus,
+.option input[type="password"]:focus {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.08);
+}
 .overlayMenu p {
   line-height: 1.6;
   font-size: 0.95rem;
   color: var(--muted-2);
 }
-
 .overlayMenu a {
   color: var(--accent);
   text-decoration: none;
 }
-
 .overlayMenu a:hover {
   text-decoration: underline;
 }
@@ -71,7 +87,6 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-
 .overlayMenu button:hover {
   background: #9de8ff;
 }
