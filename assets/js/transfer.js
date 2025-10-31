@@ -39,6 +39,14 @@ class Transfer extends HTMLElement {
           UsePass.addEventListener('input', () => {
             $('input[type="password"]', popup2.div).disabled = !UsePass.checked
           });
+          const nextBtn = $('button', popup2.div);
+          nextBtn.addEventListener('click', () => {
+            const popup3 = createPopup();
+            if (el.id === 'transferUrl') {
+              
+            }
+            popup2.removeOverLay();
+          });
         });
       });
 
