@@ -1,7 +1,7 @@
 import {c, createPopup, $, $$} from './export.js';
 
 class Transfer extends HTMLElement {
-  connectedCallback()　{
+  connectedCallback() {
     this.innerHTML = '<button id="transfer">データ移行</button>';
     const btn = this.querySelector('#transfer');
 
@@ -34,6 +34,10 @@ class Transfer extends HTMLElement {
           </label>
           `;
           popup.removeOverLay();
+          const UsePass = $('input[type="checkbox"]', popup2.div);
+          UsePass.addEventListener('input', () => {
+            $('input[type="password"]', popup2.div).disabled = !UsePass.checked
+          });
         });
       });
 
