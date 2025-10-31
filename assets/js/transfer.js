@@ -1,4 +1,4 @@
-import {c, createPopup, $} from './export.js';
+import {c, createPopup, $, $$} from './export.js';
 
 class Transfer extends HTMLElement {
   connectedCallback()　{
