@@ -21,7 +21,7 @@ class Transfer extends HTMLElement {
       `;
       $$('button', popup.div).forEach(el => {
         el.addEventListener('click', () => {
-          const popup = createPopup();
+          const S2popup = createPopup();
           popup.div.innerHTML = `
           <p>
             一時パスワードを入力:
