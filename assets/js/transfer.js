@@ -29,7 +29,7 @@ class Transfer extends HTMLElement {
           <label class="option"><input type="password"></label>
           
           <label class="option">
-            <input type="checkbox">
+            <input type="checkbox" checked>
             パスワードを使用
           </label>
           `;
