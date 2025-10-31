@@ -26,7 +26,7 @@ class Transfer extends HTMLElement {
           <p>
             一時パスワードを入力:
           </p>
-          <p><input type="password"></p>
+          <label class="option"><input type="password"></label>
           
           <label class="option">
             <input type="checkbox">
