@@ -21,7 +21,6 @@ class Transfer extends HTMLElement {
       `;
       $$('button', popup.div).forEach(el => {
         el.addEventListener('click', () => {
-          popup.removeOverLay();
           const popup = createPopup();
           popup.div.innerHTML = `
           <p>
@@ -30,6 +29,7 @@ class Transfer extends HTMLElement {
           <input type="password">
           <span><input type="checkbox">パスワードを使用します</span>
           `;
+          popup.removeOverLay();
         });
       });
 
