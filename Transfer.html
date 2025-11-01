@@ -17,8 +17,19 @@
     </style>
   </head>
   <body>
-    <script>
-      
+    <script type="module">
+      import {createPopup, $} from './assets/js/export.js';
+      (() => {
+        const params = new URLSearchParams(window.location.search);
+        if (!params.get('d')) {
+          const NoDat = createPopup();
+          Nodat.div.innerHTML = `
+          <p>
+            データが存在しません
+          </p>
+          `;
+        }
+      })();
     </script>
   </body>
 </html>
