@@ -42,6 +42,11 @@ class Transfer extends HTMLElement {
           const nextBtn = $('button', popup2.div);
           nextBtn.addEventListener('click', () => {
             const popup3 = createPopup();
+            if (UsePass.checked && $('input[type="password"]', popup2.div).value==='') {
+              alert('パスワードを入力してください');
+              $('input[type="password"]', popup2.div).focus();
+              return;
+            }
             if (el.id === 'transferUrl') {
               
             }
