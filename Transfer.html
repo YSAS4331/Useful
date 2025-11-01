@@ -1,11 +1,72 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <title>Useful Tools - データ移行ページ</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="stylesheet" href="./assets/css/variables.css">
+    <title>Useful Tools - データ移行ページ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://ysas4331.github.io/Useful/assets/css/variables.css">
+    <style>
+      body {
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        padding: 2rem;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+        color: var(--accent);
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      .transfer-box {
+        background-color: var(--card);
+        border: 1px solid var(--chip-border);
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 480px;
+        margin: 2rem auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      }
+
+      .transfer-box p {
+        color: var(--muted-2);
+        margin-bottom: 1.5rem;
+      }
+
+      .transfer-box button {
+        background-color: var(--accent);
+        color: var(--bg);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+
+      .transfer-box button:hover {
+        background-color: #38bdf8; /* 明るめのアクセント */
+      }
+
+      .footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-top: 3rem;
+      }
+    </style>
   </head>
   <body>
     <h1>Useful Tools データ移行用ページ</h1>
+    <div class="transfer-box">
+      <p>データ移行を開始するには、以下のボタンをクリックしてください。</p>
+      <button id="startTransfer">データ移行を開始</button>
+    </div>
+    <div class="footer">
+      © 2025 Useful Tools Series
+    </div>
   </body>
+</html>
