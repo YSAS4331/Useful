@@ -50,7 +50,7 @@ class Transfer extends HTMLElement {
             if (el.id === 'transferUrl') {
               popup3.div.innerHTML = `
               <p>
-                以下のURLを移行先の端末に入力してください
+                以下のURLを移行先の端末で開いてください
               </p>
               `;
             }
