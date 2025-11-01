@@ -20,14 +20,15 @@
     <script type="module">
       import {createPopup, $} from './assets/js/export.js';
       (() => {
+        const Popup1 = createPopup();
         const params = new URLSearchParams(window.location.search);
         if (!params.get('d')) {
-          const NoDat = createPopup();
-          Nodat.div.innerHTML = `
+          Popup1.div.innerHTML = `
           <p>
             データが存在しません
           </p>
           `;
+          return;
         }
       })();
     </script>
