@@ -20,8 +20,23 @@
   <body>
     <script type="module">
       import {createPopup, $, cry} from './assets/js/export.js';
-      (() => {
+      (async () => {
         const Popup1 = createPopup();
+        Popup1.div.innerHTML = `
+        <p>
+          データを取得しています
+        </p>
+        `;
+        try {
+          const res = await fetch('./links.json');
+          if (!res.ok) {
+            throw new Error(`HTTPエラー: ${res.status}`);
+          }
+          const apps = await res.json();
+          console.log(apps);
+        } catch (error) {
+          console.error('データ取得中にエラーが発生しました:', error);
+        }
         const params = new URLSearchParams(window.location.search);
         if (!params.get('d')) {
           Popup1.div.innerHTML = `
@@ -29,6 +44,16 @@
             データが存在しません
           </p>
           `;
+          return;
+        }
+        const app = params.get('a');
+        if (!(app in apps)) {
+          Popup1.div.innerHTML = `
+          <p>
+            URLの形式が正しくありません
+            URLを確認するか､再発行してください
+          </p>
+          `; 
           return;
         }
       })();
