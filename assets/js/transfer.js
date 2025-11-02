@@ -1,4 +1,4 @@
-import {c, createPopup, $, $$} from './export.js';
+import {c, createPopup, $, $$, cry} from './export.js';
 
 class Transfer extends HTMLElement {
   connectedCallback() {
@@ -47,10 +47,14 @@ class Transfer extends HTMLElement {
               return;
             }
             const popup3 = createPopup();
+            const url = `https://ysas4331.github.io/Useful/Transfer?d=${UsePass.checked?cry.encode("data", $('input[type="password"]', popup2.div).value):"data"}`
             if (el.id === 'transferUrl') {
               popup3.div.innerHTML = `
               <p>
                 以下のURLを移行先の端末で開いてください
+              </p>
+              <p>
+                ${url}
               </p>
               `;
             }
