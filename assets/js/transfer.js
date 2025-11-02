@@ -55,12 +55,11 @@ class Transfer extends HTMLElement {
                 以下のボタンをクリックし､URLを移行先の端末で開いてください
               </p>
               <span class="overlayFlex">
-                <button id="TransferUrlCopy>コピーする</button>
+                <button id="TransferUrlCopy">コピーする</button>
                 <button id="TransferClose">閉じる</button>
               </span>
               `;
               $('#TransferClose', popup3.div).addEventListener('click', () => {
-                popup2.removeOverLay();
                 popup3.removeOverLay();
               });
               $('#TransferUrlCopy', popup3.div).addEventListener('click', () => {
