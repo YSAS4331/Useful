@@ -56,14 +56,14 @@ class Transfer extends HTMLElement {
               </p>
               <span class="overlayFlex">
                 <button id="TransferUrlCopy>コピーする</button>
-                <button id="TransferClose>閉じる</button>
+                <button id="TransferClose">閉じる</button>
               </span>
               `;
-              $('TransferClose', popup3.div).addEventListener('click', () => {
+              $('#TransferClose', popup3.div).addEventListener('click', () => {
                 popup2.removeOverLay();
                 popup3.removeOverLay();
               });
-              $('TransferUrlCopy', popup3.div).addEventListener('click', () => {
+              $('#TransferUrlCopy', popup3.div).addEventListener('click', () => {
                 navigator.clipboard.writeText(url);
               });
             }
