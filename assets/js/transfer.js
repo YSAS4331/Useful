@@ -47,7 +47,7 @@ class Transfer extends HTMLElement {
               return;
             }
             const popup3 = createPopup();
-            const url = `https://ysas4331.github.io/Useful/Transfer?d=${UsePass.checked?cry.encode("data", $('input[type="password"]', popup2.div).value):"data"}`
+            const url = `https://ysas4331.github.io/Useful/Transfer?a=yt-playlist&d=${UsePass.checked?cry.encode(window.state, $('input[type="password"]', popup2.div).value):window.state}`
             if (el.id === 'transferUrl') {
               popup3.div.innerHTML = `
               <p>
