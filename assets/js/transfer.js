@@ -60,6 +60,7 @@ class Transfer extends HTMLElement {
               </span>
               `;
               $('TransferClose', popup3.div).addEventListener('click', () => {
+                popup2.removeOverLay();
                 popup3.removeOverLay();
               });
               $('TransferUrlCopy', popup3.div).addEventListener('click', () => {
