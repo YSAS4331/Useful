@@ -167,7 +167,7 @@
     return m ? m[0] : input;
   }
 
-  let state = {items: [], groups: ['すべて'], filter: 'すべて', showUncheckedOnly: false};
+  window.state = {items: [], groups: ['すべて'], filter: 'すべて', showUncheckedOnly: false};
 
   function load(){
     const raw = localStorage.getItem(STORAGE_KEY);
