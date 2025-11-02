@@ -62,8 +62,12 @@ class Transfer extends HTMLElement {
               $('#TransferClose', popup3.div).addEventListener('click', () => {
                 popup3.removeOverLay();
               });
-              $('#TransferUrlCopy', popup3.div).addEventListener('click', () => {
+              $('#TransferUrlCopy', popup3.div).addEventListener('click', e => {
                 navigator.clipboard.writeText(url);
+                e.target.textContent = 'コピーしました';
+                setTimeout(() => {
+                  e.target.textContent = 'コピーする';
+                }, 3000);
               });
             }
             popup2.removeOverLay();
