@@ -34,6 +34,9 @@ const cry = {
   },
   compression(data) {
     return LZString.compressToEncodedURIComponent(data);
+  },
+  decompression(data) {
+    return LZString.decompressFromEncodedURIComponent(data);
   }
 };
 
