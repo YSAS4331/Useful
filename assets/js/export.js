@@ -1,4 +1,5 @@
 import CryptoJS from 'https://esm.sh/crypto-js';
+import LZString from 'https://esm.sh/lz-string';
 
 // 便利関数
 const c = el => document.createElement(el);
@@ -30,6 +31,9 @@ const cry = {
   decode(cipherText, password) {
     const bytes = CryptoJS.AES.decrypt(cipherText, password);
     return bytes.toString(CryptoJS.enc.Utf8);
+  },
+  compression(data) {
+    return LZString.compressToEncodedURIComponent(data);
   }
 };
 
