@@ -47,7 +47,8 @@ class Transfer extends HTMLElement {
               return;
             }
             const popup3 = createPopup();
-            const data = JSON.stringify(window.state);
+            const raw = JSON.stringify(window.state);
+            const data = cry.compression(raw);
             const url = `https://ysas4331.github.io/Useful/Transfer?a=yt-playlist&d=${UsePass.checked?cry.encode(data, $('input[type="password"]', popup2.div).value):data}`
             if (el.id === 'transferUrl') {
               popup3.div.innerHTML = `
