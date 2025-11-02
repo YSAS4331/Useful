@@ -1,3 +1,5 @@
+import CryptoJS from 'https://esm.sh/crypto-js';
+
 // 便利関数
 const c = el => document.createElement(el);
 const $ = (sel, root=document) => root.querySelector(sel);
@@ -21,4 +23,14 @@ function createPopup() {
   return { div, removeOverLay };
 }
 
-export {c,$,$$,createPopup}
+const cry = {
+  encode(data, password) {
+    return CryptoJS.AES.encrypt(data, password).toString();
+  },
+  decode(cipherText, password) {
+    const bytes = CryptoJS.AES.decrypt(cipherText, password);
+    return bytes.toString(CryptoJS.enc.Utf8);
+  }
+};
+
+export {c,$,$$,createPopup,cry}
