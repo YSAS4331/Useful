@@ -52,12 +52,19 @@ class Transfer extends HTMLElement {
             if (el.id === 'transferUrl') {
               popup3.div.innerHTML = `
               <p>
-                以下のURLを移行先の端末で開いてください
+                以下のボタンをクリックし､URLを移行先の端末で開いてください
               </p>
-              <p>
-                ${url}
-              </p>
+              <span class="overlayFlex">
+                <button id="TransferUrlCopy>コピーする</button>
+                <button id="TransferClose>閉じる</button>
+              </span>
               `;
+              $('TransferClose', popup3.div).addEventListener('click', () => {
+                popup3.removeOverLay();
+              });
+              $('TransferUrlCopy', popup3.div).addEventListener('click', () => {
+                navigator.clipboard.writeText(url);
+              });
             }
             popup2.removeOverLay();
           });
