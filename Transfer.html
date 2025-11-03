@@ -72,7 +72,7 @@
           `;
            $('#TransferNext', Popup1.div).addEventListener('click', e => {
              const decode = cry.decode(data, e.target.value);
-             if (cry.isJSON(data.json)) {
+             if (cry.isJSON(data.json())) {
                alert('成功');
              } else {
                alert('失敗');
