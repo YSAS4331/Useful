@@ -1,4 +1,5 @@
 import {c, createPopup, $, $$, cry} from './export.js';
+import QRCode from "https://esm.sh/qrcode";
 
 class Transfer extends HTMLElement {
   connectedCallback() {
@@ -40,7 +41,7 @@ class Transfer extends HTMLElement {
             $('input[type="password"]', popup2.div).disabled = !UsePass.checked
           });
           const nextBtn = $('button', popup2.div);
-          nextBtn.addEventListener('click', () => {
+          nextBtn.addEventListener('click', async () => {
             if (UsePass.checked && $('input[type="password"]', popup2.div).value==='') {
               alert('パスワードを入力してください');
               $('input[type="password"]', popup2.div).focus();
@@ -70,6 +71,24 @@ class Transfer extends HTMLElement {
                   e.target.textContent = 'コピーする';
                 }, 3000);
               });
+            }
+            if (el.id === 'transferQr') {
+              try {
+                const QRDat = await QRCode.toDataURL(url);
+                popup3.div.innerHTML = `
+                <p>
+                  以下のQRコードを読み取ってください
+                </p>
+
+                <img src="${QRDat}">
+                `;
+              } catch(e) {
+                popup3.div.innerHTML = `
+                <p>
+                  QRコードの生成中にエラーが発生しました
+                </p>
+                `;
+              }
             }
             popup2.removeOverLay();
           });
