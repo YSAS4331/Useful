@@ -74,20 +74,25 @@ class Transfer extends HTMLElement {
             }
             if (el.id === 'transferQr') {
               try {
-                const QRDat = await QRCode.toDataURL(url);
+                const longUrl = "https://example.com/very/long/path?with=query&and=parameters";
+              
+                // URLを短縮する儀式
+                const res = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(longUrl)}`);
+                if (!res.ok) throw new Error("URL短縮に失敗しました");
+                const shortUrl = await res.text();
+              
+                // QRコード生成の儀式
+                const QRDat = await QRCode.toDataURL(shortUrl);
+              
+                // popup3に神託を表示（リンクなし）
                 popup3.div.innerHTML = `
-                <p>
-                  以下のQRコードを読み取ってください
-                </p>
-
-                <img src="${QRDat}" style="aspect-ratio: 1/1; width: 80%; height: auto; padding: 0; margin: 0;">
+                  <p>以下のQRコードを読み取ってください</p>
+                  <img src="${QRDat}" style="aspect-ratio: 1/1; width: 80%; height: auto;">
                 `;
-              } catch(e) {
+              } catch (e) {
                 popup3.div.innerHTML = `
-                <p>
-                  QRコードの生成中にエラーが発生しました
-                </p>
-                <p>${e}</p>
+                  <p>QRコード生成中にエラーが発生しました</p>
+                  <p>${e}</p>
                 `;
               }
             }
