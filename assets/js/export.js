@@ -30,7 +30,8 @@ const cry = {
   },
   decode(cipherText, password) {
     const bytes = CryptoJS.AES.decrypt(cipherText, password);
-    return bytes.toString(CryptoJS.enc.Utf8);
+    const result = bytes.toString(CryptoJS.enc.Utf8);
+    return cry.isJSON(result) ? result : null;
   },
   compression(data) {
     return LZString.compressToEncodedURIComponent(data);
