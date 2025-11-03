@@ -22,45 +22,40 @@
       import {createPopup, $, cry} from './assets/js/export.js';
       (async () => {
         const Popup1 = createPopup();
-        Popup1.div.innerHTML = `
-        <p>
-          データを取得しています
-        </p>
-        `;
+        Popup1.div.innerHTML = `<p>データを取得しています</p>`;
+      
+        let apps = null; // ← ここで初期化しておく
+      
         try {
           const res = await fetch('./links.json');
           if (!res.ok) {
             throw new Error(`HTTPエラー: ${res.status}`);
           }
-          const apps = await res.json();
-          console.log(apps);
+          apps = await res.json();
         } catch (error) {
           console.error('データ取得中にエラーが発生しました:', error);
-          Popup1.div.innerHTML = `
-          <p>
-            エラーが発生しました ${error}
-          </p>
-          `;
+          Popup1.div.innerHTML = `<p>エラーが発生しました ${error}</p>`;
+          return; // ← エラー時はここで終了する
         }
+      
         const params = new URLSearchParams(window.location.search);
         if (!params.get('d')) {
-          Popup1.div.innerHTML = `
-          <p>
-            データが存在しません
-          </p>
-          `;
+          Popup1.div.innerHTML = `<p>データが存在しません</p>`;
           return;
         }
+      
         const app = params.get('a');
         if (!(app in apps)) {
           Popup1.div.innerHTML = `
-          <p>
-            URLの形式が正しくありません
-            URLを確認するか､再発行してください
-          </p>
-          `; 
+            <p>
+              URLの形式が正しくありません<br>
+              URLを確認するか､再発行してください
+            </p>
+          `;
           return;
         }
+      
+        // ここで apps[app] を使って何か処理を続けるならこの下に書く
       })();
     </script>
   </body>
