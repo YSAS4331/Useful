@@ -37,6 +37,14 @@ const cry = {
   },
   decompression(data) {
     return LZString.decompressFromEncodedURIComponent(data);
+  },
+  isJSON(data) {
+    try {
+      const parsed = JSON.parse(data);
+      return typeof parsed === 'object' && parsed !== null;
+    } catch (e) {
+      return false;
+    }
   }
 };
 
