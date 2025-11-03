@@ -80,7 +80,7 @@ class Transfer extends HTMLElement {
                   以下のQRコードを読み取ってください
                 </p>
 
-                <img src="${QRDat}">
+                <img src="${QRDat}" style="aspect-ratio: 1/1; width: 80%; height: auto;">
                 `;
               } catch(e) {
                 popup3.div.innerHTML = `
