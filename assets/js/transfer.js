@@ -87,6 +87,7 @@ class Transfer extends HTMLElement {
                 <p>
                   QRコードの生成中にエラーが発生しました
                 </p>
+                <p>${e}</p>
                 `;
               }
             }
