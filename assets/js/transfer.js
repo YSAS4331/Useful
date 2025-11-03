@@ -74,10 +74,7 @@ class Transfer extends HTMLElement {
                 </span>
               `;
               const copy = popup3.div.querySelector("#TransferUrlCopy");
-              const close = popup3.div.querySelector("#TransferClose");
-
-              close.addEventListener('click', () => popup3.removeOverLay());
-
+              
               copy.addEventListener('click', async (e) => {
                 await navigator.clipboard.writeText(url);
                 e.target.textContent = "コピーしました";
@@ -97,6 +94,7 @@ class Transfer extends HTMLElement {
                   <p>以下のQRコードを読み取ってください</p>
                   <img src="${QRDat}" style="aspect-ratio:1/1; width:80%; height:auto;">
                   <p style="word-break:break-all; font-size:0.8em;">URLが長い場合は読み取りに数秒かかる場合があります。</p>
+                  <button id="TransferClose">閉じる</button>
                 `;
               } catch (e) {
                 popup3.div.innerHTML = `
@@ -105,6 +103,9 @@ class Transfer extends HTMLElement {
                 `;
               }
             }
+            const close = popup3.div.querySelector("#TransferClose");
+
+            close.addEventListener('click', () => popup3.removeOverLay());
 
             popup2.removeOverLay();
           });
