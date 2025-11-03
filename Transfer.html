@@ -55,7 +55,19 @@
           return;
         }
       
-        // ここで apps[app] を使って何か処理を続けるならこの下に書く
+        const data = cry.decompression(params.get('d'));
+        if (cry.isJSON(data)) {
+          // そのまま
+        } else {
+          Popup1.div.innerHTML = `
+          <p>
+            このデータは一時パスワードで保護されています
+            一時パスワードを入力して下さい
+          </p>
+
+          <label class="option"><input type="password"></label>
+          `;
+        }
       })();
     </script>
   </body>
