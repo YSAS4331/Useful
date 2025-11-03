@@ -72,11 +72,14 @@
           `;
            $('#TransferNext', Popup1.div).addEventListener('click', e => {
              const decode = cry.decode(data, e.target.value);
-             if (cry.isJSON(data.json())) {
-               alert('成功');
-             } else {
-               alert('失敗');
-             }
+              if (decoded !== null) {
+                alert('成功');
+                // ここで decoded を JSON.parse して次の処理に渡すなどできる
+                const json = JSON.parse(decoded);
+                console.log(json); // ← 必要ならここで表示
+              } else {
+                alert('パスワードが間違っているか、データが壊れています');
+              }
            });
         }
       })();
