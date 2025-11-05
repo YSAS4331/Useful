@@ -104,7 +104,6 @@ class Transfer extends HTMLElement {
             if (el.id === "transferUrl") {
               popup3.div.innerHTML = `
                 <p>以下のボタンをクリックし､移行先の端末で開いてください</p>
-                <p style="word-break: break-all; font-size: 0.8em;">${shortUrl}</p>
                 <span class="overlayFlex">
                   <button id="TransferUrlCopy">コピーする</button>
                   <button id="TransferClose">閉じる</button>
@@ -129,7 +128,6 @@ class Transfer extends HTMLElement {
                 popup3.div.innerHTML = `
                   <p>以下のQRコードを読み取ってください</p>
                   <img src="${QRDat}" style="aspect-ratio:1/1; width:80%; height:auto;">
-                  <p style="word-break:break-all; font-size:0.8em;">${shortUrl}</p>
                   <button id="TransferClose">閉じる</button>
                 `;
               } catch (e) {
