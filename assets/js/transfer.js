@@ -9,12 +9,12 @@ class Transfer extends HTMLElement {
     btn.addEventListener('click', () => {
       const popup = createPopup();
       popup.div.innerHTML = `
-        <p>どちらの形式でデータ移行しますか？</p>
-        <span class="overlayFlex">
-          <button id="transferUrl">URLで移行</button>
-          <button id="transferQr">QRで移行</button>
-        </span>
-        <span class="hint">QRコードは株式会社デンソーウェーブの登録商標です</span>
+      <p>どちらの形式でデータ移行しますか？</p>
+      <span class="overlayFlex">
+        <button id="transferUrl">URLで移行</button>
+        <button id="transferQr">QRで移行</button>
+      </span>
+      <span class="hint">QRコードは株式会社デンソーウェーブの登録商標です</span>
       `;
 
       const buttons = popup.div.querySelectorAll("button");
@@ -60,37 +60,15 @@ class Transfer extends HTMLElement {
               ? await cry.encode(compressed, passInput.value)
               : compressed;
 
-            // 長いURLを作成
             const longUrl = `https://ysas4331.github.io/Useful/Transfer?a=yt-playlist&d=${encodeURIComponent(payload)}`;
             let shortUrl = longUrl; // デフォルト
 
+            // --- 短縮URL生成処理（再試行付き） ---
             try {
-              // --- 毎回新しいトークンを取得 ---
-              const tokenRes = await fetch("https://xs116555.xsrv.jp/api/get_token.php", {
-                method: "GET",
-                mode: "cors",
-              });
-              const tokenData = await tokenRes.json();
-              const token = tokenData.token;
-
-              // 短縮URL生成
-              const shortenRes = await fetch("https://xs116555.xsrv.jp/api/shorten.php", {
-                method: "POST",
-                mode: "cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token, url: longUrl })
-              });
-
-              const shortenData = await shortenRes.json();
-              if (shortenData.short_url) {
-                shortUrl = shortenData.short_url;
-              } else {
-                console.warn("短縮URL生成に失敗:", shortenData);
-                alert(JSON.stringify(shortenData, null, 2));
-              }
+              shortUrl = await generateShortUrl(longUrl);
             } catch (err) {
-              console.warn("短縮URL通信エラー:", err);
-              alert(String(err));
+              console.warn("短縮URL生成に失敗:", err);
+              alert(`短縮URL生成に失敗しました:\n${JSON.stringify(err, null, 2)}`);
             }
 
             // --- 表示部分 ---
@@ -122,6 +100,7 @@ class Transfer extends HTMLElement {
                 popup3.div.innerHTML = `
                   <p>QRコード生成中にエラーが発生しました</p>
                   <p>${String(e)}</p>
+                  <button id="TransferClose">閉じる</button>
                 `;
               }
             }
@@ -133,6 +112,40 @@ class Transfer extends HTMLElement {
         });
       });
     });
+  }
+}
+
+// --- 短縮URL生成関数（トークン再取得＋再試行） ---
+async function generateShortUrl(url, retries = 1) {
+  try {
+    // トークン取得
+    const tokenRes = await fetch("https://xs116555.xsrv.jp/api/get_token.php", {
+      method: "GET",
+      mode: "cors",
+    });
+    const tokenData = await tokenRes.json();
+    const token = tokenData.token;
+
+    // 短縮URL生成
+    const shortenRes = await fetch("https://xs116555.xsrv.jp/api/shorten.php", {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, url })
+    });
+
+    const data = await shortenRes.json();
+
+    if (data.short_url) return data.short_url;
+
+    // トークンエラー時は再試行
+    if ((data.error?.toLowerCase().includes("invalid") || data.error?.toLowerCase().includes("expired")) && retries > 0) {
+      return await generateShortUrl(url, retries - 1);
+    }
+
+    throw data;
+  } catch (err) {
+    throw err;
   }
 }
 
