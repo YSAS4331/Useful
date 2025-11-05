@@ -36,13 +36,14 @@ class Transfer extends HTMLElement {
 
           const UsePass = popup2.div.querySelector('input[type="checkbox"]');
           const passInput = popup2.div.querySelector('input[type="password"]');
-          passInput.disabled = !UsePass.checked;
 
+          passInput.disabled = !UsePass.checked;
           UsePass.addEventListener('input', () => {
             passInput.disabled = !UsePass.checked;
           });
 
           const nextBtn = popup2.div.querySelector("button");
+
           nextBtn.addEventListener('click', async () => {
             if (UsePass.checked && passInput.value === '') {
               alert("パスワードを入力してください");
@@ -52,27 +53,25 @@ class Transfer extends HTMLElement {
 
             const popup3 = createPopup();
 
-            // --- データ生成 ---
+            // データ生成
             const raw = JSON.stringify(window.state);
             const compressed = await cry.compression(raw);
             const payload = UsePass.checked
               ? await cry.encode(compressed, passInput.value)
               : compressed;
 
+            // 長いURLを作成
             const longUrl = `https://ysas4331.github.io/Useful/Transfer?a=yt-playlist&d=${encodeURIComponent(payload)}`;
-            let shortUrl = longUrl; // フォールバック
+            let shortUrl = longUrl; // デフォルト
 
-            // --- トークン取得と短縮URL生成をまとめて処理 ---
             try {
-              // トークン取得
+              // --- 毎回新しいトークンを取得 ---
               const tokenRes = await fetch("https://xs116555.xsrv.jp/api/get_token.php", {
                 method: "GET",
                 mode: "cors",
               });
               const tokenData = await tokenRes.json();
               const token = tokenData.token;
-
-              if (!token) throw new Error("トークン取得失敗");
 
               // 短縮URL生成
               const shortenRes = await fetch("https://xs116555.xsrv.jp/api/shorten.php", {
@@ -83,17 +82,18 @@ class Transfer extends HTMLElement {
               });
 
               const shortenData = await shortenRes.json();
-
               if (shortenData.short_url) {
                 shortUrl = shortenData.short_url;
               } else {
-                alert("短縮URL生成に失敗:\n" + JSON.stringify(shortenData, null, 2));
+                console.warn("短縮URL生成に失敗:", shortenData);
+                alert(JSON.stringify(shortenData, null, 2));
               }
             } catch (err) {
-              alert("短縮URL通信エラー:\n" + String(err));
+              console.warn("短縮URL通信エラー:", err);
+              alert(String(err));
             }
 
-            // --- 表示 ---
+            // --- 表示部分 ---
             if (el.id === "transferUrl") {
               popup3.div.innerHTML = `
                 <p>以下のボタンをクリックし､移行先の端末で開いてください</p>
@@ -122,7 +122,6 @@ class Transfer extends HTMLElement {
                 popup3.div.innerHTML = `
                   <p>QRコード生成中にエラーが発生しました</p>
                   <p>${String(e)}</p>
-                  <button id="TransferClose">閉じる</button>
                 `;
               }
             }
