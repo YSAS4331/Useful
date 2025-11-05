@@ -93,7 +93,7 @@ class Transfer extends HTMLElement {
                 shortUrl = shortenData.short_url;
               } else {
                 console.warn("短縮URL生成に失敗:", shortenData);
-                alert(shortenData);
+                alert(JSON.stringify(shortenData, null, 2));
               }
             } catch (err) {
               console.warn("短縮URL通信エラー:", err);
