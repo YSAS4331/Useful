@@ -9,18 +9,18 @@ class Transfer extends HTMLElement {
     btn.addEventListener('click', () => {
       const popup = createPopup();
       popup.div.innerHTML = `
-      <p>どちらの形式でデータ移行しますか？</p>
-      <span class="overlayFlex">
-        <button id="transferUrl">URLで移行</button>
-        <button id="transferQr">QRで移行</button>
-      </span>
-      <span class="hint">QRコードは株式会社デンソーウェーブの登録商標です</span>
+        <p>どちらの形式でデータ移行しますか？</p>
+        <span class="overlayFlex">
+          <button id="transferUrl">URLで移行</button>
+          <button id="transferQr">QRで移行</button>
+        </span>
+        <span class="hint">QRコードは株式会社デンソーウェーブの登録商標です</span>
       `;
 
       const buttons = popup.div.querySelectorAll("button");
 
       buttons.forEach(el => {
-        el.addEventListener('click', () => {
+        el.addEventListener('click', async () => {
           const popup2 = createPopup();
           popup2.div.innerHTML = `
             <p>一時パスワードを入力:</p>
@@ -36,14 +36,13 @@ class Transfer extends HTMLElement {
 
           const UsePass = popup2.div.querySelector('input[type="checkbox"]');
           const passInput = popup2.div.querySelector('input[type="password"]');
-
           passInput.disabled = !UsePass.checked;
+
           UsePass.addEventListener('input', () => {
             passInput.disabled = !UsePass.checked;
           });
 
           const nextBtn = popup2.div.querySelector("button");
-
           nextBtn.addEventListener('click', async () => {
             if (UsePass.checked && passInput.value === '') {
               alert("パスワードを入力してください");
@@ -53,19 +52,17 @@ class Transfer extends HTMLElement {
 
             const popup3 = createPopup();
 
-            // データ生成
+            // --- データ生成 ---
             const raw = JSON.stringify(window.state);
             const compressed = await cry.compression(raw);
-
             const payload = UsePass.checked
               ? await cry.encode(compressed, passInput.value)
               : compressed;
 
-            // 長いURLを作成
             const longUrl = `https://ysas4331.github.io/Useful/Transfer?a=yt-playlist&d=${encodeURIComponent(payload)}`;
-            let shortUrl = longUrl; // デフォルト（失敗時フォールバック）
+            let shortUrl = longUrl; // フォールバック
 
-            // --- 短縮URL生成処理 ---
+            // --- トークン取得と短縮URL生成をまとめて処理 ---
             try {
               // トークン取得
               const tokenRes = await fetch("https://xs116555.xsrv.jp/api/get_token.php", {
@@ -75,32 +72,28 @@ class Transfer extends HTMLElement {
               const tokenData = await tokenRes.json();
               const token = tokenData.token;
 
-              // 短縮URL生成リクエスト
+              if (!token) throw new Error("トークン取得失敗");
+
+              // 短縮URL生成
               const shortenRes = await fetch("https://xs116555.xsrv.jp/api/shorten.php", {
                 method: "POST",
                 mode: "cors",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                  token,
-                  url: longUrl
-                })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token, url: longUrl })
               });
 
               const shortenData = await shortenRes.json();
+
               if (shortenData.short_url) {
                 shortUrl = shortenData.short_url;
               } else {
-                console.warn("短縮URL生成に失敗:", shortenData);
-                alert(JSON.stringify(shortenData, null, 2));
+                alert("短縮URL生成に失敗:\n" + JSON.stringify(shortenData, null, 2));
               }
             } catch (err) {
-              console.warn("短縮URL通信エラー:", err);
-              alert(err);
+              alert("短縮URL通信エラー:\n" + String(err));
             }
 
-            // --- 表示部分 ---
+            // --- 表示 ---
             if (el.id === "transferUrl") {
               popup3.div.innerHTML = `
                 <p>以下のボタンをクリックし､移行先の端末で開いてください</p>
@@ -110,7 +103,6 @@ class Transfer extends HTMLElement {
                 </span>
               `;
               const copy = popup3.div.querySelector("#TransferUrlCopy");
-
               copy.addEventListener('click', async (e) => {
                 await navigator.clipboard.writeText(shortUrl);
                 e.target.textContent = "コピーしました";
@@ -118,13 +110,9 @@ class Transfer extends HTMLElement {
               });
             }
 
-            // QRで移行
             if (el.id === "transferQr") {
               try {
-                const QRDat = await QRCode.toDataURL(shortUrl, {
-                  errorCorrectionLevel: "L"
-                });
-
+                const QRDat = await QRCode.toDataURL(shortUrl, { errorCorrectionLevel: "L" });
                 popup3.div.innerHTML = `
                   <p>以下のQRコードを読み取ってください</p>
                   <img src="${QRDat}" style="aspect-ratio:1/1; width:80%; height:auto;">
@@ -134,6 +122,7 @@ class Transfer extends HTMLElement {
                 popup3.div.innerHTML = `
                   <p>QRコード生成中にエラーが発生しました</p>
                   <p>${String(e)}</p>
+                  <button id="TransferClose">閉じる</button>
                 `;
               }
             }
