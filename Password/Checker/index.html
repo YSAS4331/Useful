@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NIST パスワード安全性チェッカー</title>
+  <link rel="stylesheet" href="../../assets/css/variables.css">
+  <style>
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,Roboto,"Noto Sans JP",-apple-system,"Segoe UI",Helvetica,Arial}
+    .wrap{max-width:960px;margin:36px auto;padding:20px}
+    header{display:flex;align-items:center;gap:12px}
+    h1{margin:0;font-size:20px}
+    p.lead{color:var(--muted);margin:6px 0 18px}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,0.03);padding:18px;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.6)}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type="text"],input[type="password"]{width:100%;padding:10px;border-radius:8px;border:1px solid var(--chip-border);background:transparent;color:var(--text);outline:none}
+    .controls{display:flex;gap:8px;align-items:center;margin-top:10px}
+    button{background:transparent;border:1px solid var(--chip-border);padding:8px 12px;border-radius:8px;color:var(--accent);cursor:pointer}
+    .checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+    .check{background:var(--chip-bg);border:1px solid var(--chip-border);padding:10px;border-radius:8px;font-size:13px;color:var(--muted-2)}
+    .ok{color:#86efac}
+    .bad{color:#fda4af}
+    .meter{height:10px;border-radius:999px;background:rgba(255,255,255,0.04);overflow:hidden}
+    .meter > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#4ade80);transition:width .25s ease}
+    small.note{color:var(--muted);display:block;margin-top:8px}
+    .footer{margin-top:12px;color:var(--muted);font-size:13px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    .hint{font-size:13px;color:var(--muted);margin-top:8px}
+    @media(max-width:700px){.checks{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden><rect width="24" height="24" rx="6" fill="url(#g)"/></svg>
+      <div>
+        <h1>NIST パスワード安全性チェッカー</h1>
+        <p class="lead">NIST SP 800-63B（最新版）に準拠したチェックを行います。パスワードを入力して安全性を確認してください。</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <label>ユーザー名・メール（オプション — パスワードに含めないようチェックします）</label>
+      <input id="username" type="text" placeholder="例: matusan@example.com" />
+
+      <label style="margin-top:12px">パスワードを入力</label>
+      <input id="pwd" type="password" placeholder="ここにパスワード" />
+      <div class="controls">
+        <button id="toggle">表示/非表示</button>
+        <button id="checkLocal">ローカルチェック</button>
+        <button id="checkHIBP">漏洩リスト照会 (Have I Been Pwned)</button>
+        <button id="copy">コピー</button>
+      </div>
+
+      <div class="checks" style="margin-top:12px">
+        <div class="check" id="c-length">長さ: —</div>
+        <div class="check" id="c-max">最大長対応: —</div>
+        <div class="check" id="c-composition">構成ルール強制: —</div>
+        <div class="check" id="c-blacklist">禁止リスト: —</div>
+        <div class="check" id="c-username">ユーザー名一致: —</div>
+        <div class="check" id="c-breached">漏洩照合: —</div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label>強度メーター</label>
+        <div class="meter"><i id="meterBar"></i></div>
+        <small class="note">評価は簡易エントロピー推定に基づきます。NISTは長さとブロックリスト照合を重視します。</small>
+      </div>
+
+      <div class="hint">注: このツールはクライアント側で計算します。漏洩照合はパスワードのSHA-1の先頭5文字のみを送信するk-anonymity方式を使用します（Have I Been Pwned API）。</div>
+      <div class="footer">色変数は外部の variables.css を使用しています (https://ysas4331.github.io/Useful/assets/css/variables.css)</div>
+    </div>
+  </div>
+
+  <script>
+    // --- Utilities ---
+    const el = id => document.getElementById(id);
+    const pwd = el('pwd');
+    const username = el('username');
+    const meterBar = el('meterBar');
+
+    el('toggle').addEventListener('click', ()=>{
+      pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    });
+    el('copy').addEventListener('click', ()=>{
+      navigator.clipboard.writeText(pwd.value).then(()=>alert('コピーしました'))
+    });
+
+    // small built-in blacklist (extendable)
+    const common = new Set([
+      'password','123456','123456789','12345678','12345','qwerty','abc123','password1','letmein','iloveyou','admin'
+    ]);
+
+    function setCheck(id, ok, text){
+      const node = el(id);
+      node.innerHTML = text;
+      node.classList.toggle('ok', ok);
+      node.classList.toggle('bad', !ok);
+    }
+
+    function estimateEntropy(s){
+      // very rough: estimate charset size then * length * log2
+      let pool = 0;
+      if(/[a-z]/.test(s)) pool += 26;
+      if(/[A-Z]/.test(s)) pool += 26;
+      if(/[0-9]/.test(s)) pool += 10;
+      if(/\s/.test(s)) pool += 1;
+      if(/[^\x00-\x7F]/.test(s)) pool += 50; // rough for unicode
+      if(/[^a-zA-Z0-9\s]/.test(s)) pool += 32;
+      if(pool === 0) return 0;
+      const entropy = Math.log2(pool) * s.length;
+      return Math.round(entropy);
+    }
+
+    function updateChecks(){
+      const s = pwd.value || '';
+      // Length checks per NIST: SHALL >=8, SHOULD >=15. Max SHOULD >=64.
+      const lenOk = s.length >= 8;
+      const lenRec = s.length >= 15;
+      setCheck('c-length', lenOk, `長さ: ${s.length}文字 — 最低8文字${lenRec? '（推奨15文字以上）':''}`);
+      setCheck('c-max', s.length <= 64, `最大長: ${s.length<=64 ? '対応あり' : '64文字を超えています'}`);
+
+      // No composition rules MUST be enforced by verifier (NIST: avoid forcing categories)
+      setCheck('c-composition', true, '構成ルール: サービス側で強制しないことを推奨 (例: 大文字/数字必須 を課さない)');
+
+      // blacklist check
+      const lower = s.toLowerCase();
+      const isCommon = common.has(lower);
+      setCheck('c-blacklist', !isCommon && !(lower.length && lower.match(/^(?:\d+)$/)), isCommon? '禁止リストに該当' : '禁止リストに該当しない');
+
+      // username inclusion
+      const uname = (username.value||'').toLowerCase();
+      const containsUser = uname && s.toLowerCase().includes(uname.replace(/\s+/g,''));
+      setCheck('c-username', !containsUser, containsUser? 'ユーザー名が含まれています' : 'ユーザー名は含まれていません');
+
+      // meter
+      const ent = estimateEntropy(s);
+      const pct = Math.min(100, Math.round((ent/80)*100));
+      meterBar.style.width = pct + '%';
+
+      // breached state initial unknown
+      setCheck('c-breached', false, '未照合 — "漏洩リスト照会" を実行してください');
+    }
+
+    pwd.addEventListener('input', updateChecks);
+    username.addEventListener('input', updateChecks);
+    el('checkLocal').addEventListener('click', updateChecks);
+
+    // --- HIBP k-Anonymity ---
+    async function sha1(s){
+      const enc = new TextEncoder();
+      const data = enc.encode(s);
+      const hash = await crypto.subtle.digest('SHA-1', data);
+      const hex = Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+      return hex.toUpperCase();
+    }
+
+    el('checkHIBP').addEventListener('click', async ()=>{
+      const s = pwd.value || '';
+      if(!s){alert('パスワードを入力してください');return}
+      setCheck('c-breached', false, '照会中...');
+      try{
+        const h = await sha1(s);
+        const prefix = h.slice(0,5);
+        const suffix = h.slice(5);
+        const resp = await fetch('https://api.pwnedpasswords.com/range/' + prefix);
+        if(!resp.ok) throw new Error('API Error ' + resp.status);
+        const text = await resp.text();
+        const lines = text.split('\n');
+        let found = false;
+        let count = 0;
+        for(const line of lines){
+          const [suf,c] = line.split(':');
+          if(suf.trim() === suffix){ found = true; count = parseInt(c); break}
+        }
+        if(found){ setCheck('c-breached', false, `漏洩リストに一致 — 回数: ${count} 回`); alert('このパスワードは過去の漏洩に含まれています。使用しないでください。') }
+        else setCheck('c-breached', true, '漏洩リストに見つかりませんでした');
+      }catch(e){ setCheck('c-breached', false, '照会に失敗しました（CORSまたはネットワーク）'); console.error(e) }
+    });
+
+    // initial
+    updateChecks();
+  </script>
+</body>
+</html>
